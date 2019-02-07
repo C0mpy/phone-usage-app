@@ -2,7 +2,10 @@ package com.example;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -21,8 +24,14 @@ import java.util.UUID;
 import dao.JSONDataAccess;
 import model.Metadata;
 import model.Question;
+import model.QuestionResponse;
 import model.Survey;
+import model.SurveyResult;
 import phone_usage_app.sw63.phoneusageapp.R;
+import receiver.NetworkStateReceiver;
+import receiver.ScreenOffReceiver;
+import receiver.ScreenOnReceiver;
+import service.StartReceiversService;
 import util.Util;
 
 public class MainActivity extends Activity {
@@ -30,6 +39,8 @@ public class MainActivity extends Activity {
     HashMap<Integer, Integer> questionSeekbar = new HashMap<>();
     Context context;
     LinearLayout questionLinearLayout;
+    Metadata metadata;
+    Survey survey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +52,7 @@ public class MainActivity extends Activity {
 
         initMetadata();
         initSurvey();
+        initPhoneUsage();
 
         displaySurvey();
     }
@@ -49,9 +61,11 @@ public class MainActivity extends Activity {
         Metadata metadata = new Metadata();
         metadata.setUuid(UUID.randomUUID().toString());
         metadata.setLastSurveyTakenTime(new Date());
-        metadata.setResultsSentToServer(false);
+        metadata.setSurveyFetchedFromServer(false);
+        metadata.setTimeToNextSurveyInHours(24 * 7);
+        metadata.setSurveyResultsSentToServer(false);
 
-        JSONDataAccess.initMetadata(metadata, context);
+        this.metadata = JSONDataAccess.initMetadata(metadata, context);
     }
 
     private void initSurvey() {
@@ -71,12 +85,14 @@ public class MainActivity extends Activity {
         survey.setId("INITIAL");
         survey.setQuestions(questions);
 
-        JSONDataAccess.initSurvey(survey, context);
+        this.survey = JSONDataAccess.initSurvey(survey, context);
+    }
+
+    private void initPhoneUsage() {
+        JSONDataAccess.initPhoneUsage(context);
     }
 
     private void displaySurvey() {
-
-        Survey survey = JSONDataAccess.readSurvey(context);
 
         for(Question q : survey.getQuestions()) {
 
@@ -100,25 +116,62 @@ public class MainActivity extends Activity {
             linearLayout.addView(seekBar);
 
             questionLinearLayout.addView(linearLayout);
-
         }
 
         Button finishButton = new Button(context);
         finishButton.setId("finishButton".hashCode());
         finishButton.setText("FINISH");
         finishButton.setTextSize(Util.convertToDp(10, context));
+
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for(int textViewId : questionSeekbar.keySet()) {
-                    TextView textView = (TextView) findViewById(textViewId);
-                    SeekBar seekBar = (SeekBar) findViewById(questionSeekbar.get(textViewId));
+                SurveyResult surveyResult = createSurveyResult(survey);
+                saveSurveyResultAndUpdateMetadata(surveyResult, context);
 
+                Toast.makeText(context,
+                        "Thanks for taking the survey! Next survey expected in: "
+                        + metadata.getTimeToNextSurveyInHours() / 24 + " days!",
+                        Toast.LENGTH_LONG).show();
 
-                }
+                registerReceivers();
             }
         });
+
         questionLinearLayout.addView(finishButton);
     }
+
+    private SurveyResult createSurveyResult(Survey survey) {
+        SurveyResult surveyResult = new SurveyResult();
+        surveyResult.setSurveyId(survey.getId());
+
+        for(Question q : survey.getQuestions()) {
+            int seekBarId = ("seekBar" + q.getText()).hashCode();
+            SeekBar seekBar = (SeekBar) findViewById(seekBarId);
+
+            QuestionResponse questionResponse = new QuestionResponse();
+            questionResponse.setQuestion(q);
+            questionResponse.setResponse(Integer.toString(seekBar.getProgress()));
+            surveyResult.getQuestionResults().add(questionResponse);
+        }
+        return surveyResult;
+    }
+
+    private void saveSurveyResultAndUpdateMetadata(SurveyResult surveyResult, Context context) {
+        JSONDataAccess.writeSurveyResult(surveyResult, context);
+
+        metadata.setSurveyFetchedFromServer(false);
+        metadata.setSurveyResultsSentToServer(false);
+        metadata.setLastSurveyTakenTime(new Date());
+        JSONDataAccess.writeMetadata(metadata, context);
+    }
+
+    private void registerReceivers() {
+        Intent startIntent = new Intent(context, StartReceiversService.class);
+        startService(startIntent);
+        //       SurveyAlarm.start(context);
+//        finish();
+    }
+
 
 }

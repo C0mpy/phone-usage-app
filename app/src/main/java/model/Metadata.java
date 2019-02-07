@@ -5,8 +5,12 @@ import java.util.Date;
 public class Metadata {
 
     private String uuid;
+
     private Date lastSurveyTakenTime;
-    private Boolean resultsSentToServer;
+    private Boolean surveyFetchedFromServer;
+    private Integer timeToNextSurveyInHours;
+
+    private Boolean surveyResultsSentToServer;
 
     public String getUuid() {
         return uuid;
@@ -24,11 +28,27 @@ public class Metadata {
         this.lastSurveyTakenTime = lastSurveyTakenTime;
     }
 
-    public Boolean getResultsSentToServer() {
-        return resultsSentToServer;
+    public Boolean getSurveyFetchedFromServer() {
+        return surveyFetchedFromServer;
     }
 
-    public void setResultsSentToServer(Boolean resultsSentToServer) {
-        this.resultsSentToServer = resultsSentToServer;
+    public void setSurveyFetchedFromServer(Boolean surveyFetchedFromServer) {
+        this.surveyFetchedFromServer = surveyFetchedFromServer;
+    }
+
+    public Integer getTimeToNextSurveyInHours() {
+        return timeToNextSurveyInHours;
+    }
+
+    public void setTimeToNextSurveyInHours(Integer timeToNextSurveyInHours) {
+        this.timeToNextSurveyInHours = timeToNextSurveyInHours;
+    }
+
+    public Boolean getSurveyResultsSentToServer() {
+        return surveyResultsSentToServer;
+    }
+
+    public void setSurveyResultsSentToServer(Boolean surveyResultsSentToServer) {
+        this.surveyResultsSentToServer = surveyResultsSentToServer;
     }
 }

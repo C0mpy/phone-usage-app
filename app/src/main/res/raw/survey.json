@@ -1,7 +1,0 @@
-{
-  "id": "INITIAL",
-  "questions": [
-    {"id": "-1", "text": "How would you rate your quality of sleep?"},
-    {"id": "-2", "text": "How would you rate your attention span?"}
-  ]
-}
