@@ -3,9 +3,7 @@ package com.example;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -28,9 +26,7 @@ import model.QuestionResponse;
 import model.Survey;
 import model.SurveyResult;
 import phone_usage_app.sw63.phoneusageapp.R;
-import receiver.NetworkStateReceiver;
-import receiver.ScreenOffReceiver;
-import receiver.ScreenOnReceiver;
+import receiver.SurveyAlarm;
 import service.StartReceiversService;
 import util.Util;
 
@@ -169,8 +165,8 @@ public class MainActivity extends Activity {
     private void registerReceivers() {
         Intent startIntent = new Intent(context, StartReceiversService.class);
         startService(startIntent);
-        //       SurveyAlarm.start(context);
-//        finish();
+        SurveyAlarm.start(context);
+        finish();
     }
 
 

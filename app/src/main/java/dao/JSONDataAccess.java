@@ -73,6 +73,8 @@ public class JSONDataAccess {
 
     public static void writeCurrentPhoneUsageData(PhoneUsage phoneUsageData, Context context) {
         writeJsonObject("phoneUsage", phoneUsageData, context);
+        PhoneUsage pu = readCurrentPhoneUsageData(context);
+        System.out.println("we");
     }
 
     public static PhoneUsage readCurrentPhoneUsageData(Context context) {

@@ -8,6 +8,8 @@ import android.net.NetworkInfo;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.net.InetAddress;
+
 public class NetworkStateReceiver extends BroadcastReceiver {
 
     @Override
@@ -18,8 +20,11 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             final NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
 
             if (ni != null && ni.isConnected()) {
-                Log.wtf("sumtag","NET!");
-                // TODO Fetch new data and send old results
+                try {
+                    // TODO Fetch new data and send old results
+                } catch (Exception e) {
+                    Log.wtf("sumtag","catch!");
+                }
             }
         }
     }

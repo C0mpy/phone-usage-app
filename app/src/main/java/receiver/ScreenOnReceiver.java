@@ -16,9 +16,6 @@ public class ScreenOnReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        PhoneUsage newPhoneUsage = new PhoneUsage();
-        newPhoneUsage.setStartTime(System.currentTimeMillis());
-
         JSONDataAccess.initPhoneUsage(context);
         Log.wtf("sumtag","ON!");
     }
