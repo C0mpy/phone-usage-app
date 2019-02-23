@@ -3,7 +3,7 @@ package model;
 public class Question {
 
     private String id;
-    private String text;
+    private String content;
 
     public String getId() {
         return id;
@@ -13,11 +13,11 @@ public class Question {
         this.id = id;
     }
 
-    public String getText() {
-        return text;
+    public String getContent() {
+        return content;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setContent(String content) {
+        this.content = content;
     }
 }

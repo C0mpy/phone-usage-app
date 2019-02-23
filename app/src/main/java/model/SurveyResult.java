@@ -6,8 +6,7 @@ import java.util.List;
 public class SurveyResult {
 
     String surveyId;
-    String userUUID;
-    List<QuestionResponse> questionResults = new ArrayList<>();
+    List<QuestionResponse> questionResponses = new ArrayList<>();
 
     public String getSurveyId() {
         return surveyId;
@@ -17,19 +16,11 @@ public class SurveyResult {
         this.surveyId = surveyId;
     }
 
-    public String getUserUUID() {
-        return userUUID;
+    public List<QuestionResponse> getQuestionResponses() {
+        return questionResponses;
     }
 
-    public void setUserUUID(String userUUID) {
-        this.userUUID = userUUID;
-    }
-
-    public List<QuestionResponse> getQuestionResults() {
-        return questionResults;
-    }
-
-    public void setQuestionResults(List<QuestionResponse> questionResults) {
-        this.questionResults = questionResults;
+    public void setQuestionResponses(List<QuestionResponse> questionResponses) {
+        this.questionResponses = questionResponses;
     }
 }

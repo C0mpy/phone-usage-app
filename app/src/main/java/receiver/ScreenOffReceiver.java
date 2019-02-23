@@ -23,7 +23,7 @@ public class ScreenOffReceiver extends BroadcastReceiver {
             phoneUsageData.setEndTime(System.currentTimeMillis());
             JSONDataAccess.writeCurrentPhoneUsageData(phoneUsageData, context);
 
-            // put phone usage data to database asynchronouslly
+            // save phone usage data to database asynchronouslly
             new Thread(new Runnable() {
                 public void run() {
                     PhoneUsageDbHelper phoneUsageDbHelper = new PhoneUsageDbHelper(context);
@@ -35,35 +35,6 @@ public class ScreenOffReceiver extends BroadcastReceiver {
                     values.put("start_time", phoneUsage.getStartTime());
                     values.put("end_time", phoneUsage.getEndTime());
                     db.insert(PhoneUsageContract.PhoneUsageEntry.TABLE_NAME, null, values);
-                    db.setTransactionSuccessful();
-                    db.endTransaction();
-
-                    db.beginTransaction();
-                    String[] projection = {
-                            BaseColumns._ID,
-                            PhoneUsageContract.PhoneUsageEntry.COLUMN_NAME_START_TIME,
-                            PhoneUsageContract.PhoneUsageEntry.COLUMN_NAME_END_TIME
-                    };
-
-                    Cursor cursor = db.query(
-                            PhoneUsageContract.PhoneUsageEntry.TABLE_NAME,   // The table to query
-                            null,             // The array of columns to return (pass null to get all)
-                            null,              // The columns for the WHERE clause
-                            null,          // The values for the WHERE clause
-                            null,                   // don't group the rows
-                            null,                   // don't filter by row groups
-                            null               // The sort order
-                    );
-
-
-                    while(cursor.moveToNext()) {
-                        String startTime = cursor.getString(
-                                cursor.getColumnIndexOrThrow(PhoneUsageContract.PhoneUsageEntry.COLUMN_NAME_START_TIME));
-                        String endTime = cursor.getString(
-                                cursor.getColumnIndexOrThrow(PhoneUsageContract.PhoneUsageEntry.COLUMN_NAME_END_TIME));
-                        Log.wtf("sumtag",startTime + " - " + endTime);
-                    }
-                    cursor.close();
                     db.setTransactionSuccessful();
                     db.endTransaction();
                 }

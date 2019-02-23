@@ -5,12 +5,10 @@ import java.util.Date;
 public class Metadata {
 
     private String uuid;
-
     private Date lastSurveyTakenTime;
     private Boolean surveyFetchedFromServer;
-    private Integer timeToNextSurveyInHours;
-
     private Boolean surveyResultsSentToServer;
+    private Integer timeToNextSurveyInHours;
 
     public String getUuid() {
         return uuid;

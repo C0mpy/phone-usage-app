@@ -26,8 +26,8 @@ public class SurveyAlarm  {
             alarmManager = (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
             alarmManager.setRepeating(
                     AlarmManager.RTC_WAKEUP,
-                    currentTimeInMillis + 30000,
-                    30000,
+                    currentTimeInMillis + 3000000,
+                    3000000,
                     pendingIntent);
             Log.wtf("myTag", "Alarm is NOT active");
         } else {

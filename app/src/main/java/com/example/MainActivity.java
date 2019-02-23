@@ -32,8 +32,8 @@ import util.Util;
 
 public class MainActivity extends Activity {
 
-    HashMap<Integer, Integer> questionSeekbar = new HashMap<>();
     Context context;
+    HashMap<Integer, Integer> questionSeekbar = new HashMap<>();
     LinearLayout questionLinearLayout;
     Metadata metadata;
     Survey survey;
@@ -43,8 +43,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        questionLinearLayout = (LinearLayout)findViewById(R.id.questions_linear_layout);
         context = getApplicationContext();
+        questionLinearLayout = (LinearLayout)findViewById(R.id.questions_linear_layout);
 
         initMetadata();
         initSurvey();
@@ -66,19 +66,21 @@ public class MainActivity extends Activity {
 
     private void initSurvey() {
         Question question1 = new Question();
-        question1.setId("-1");
-        question1.setText("How would you rate your quality of sleep?");
+        question1.setId("1");
+        question1.setContent("How would you rate your quality of sleep?");
 
         Question question2 = new Question();
-        question2.setId("-2");
-        question2.setText("How would you rate your attention span?");
+        question2.setId("2");
+        question2.setContent("How would you rate your attention span?");
 
         List<Question> questions = new ArrayList<>();
         questions.add(question1);
         questions.add(question2);
 
         Survey survey = new Survey();
-        survey.setId("INITIAL");
+        survey.setId("1");
+        survey.setTitle("This is the inital Survey deployed to mobile devices.");
+        survey.setDescription("Please answer questions on a scale 1 - 5");
         survey.setQuestions(questions);
 
         this.survey = JSONDataAccess.initSurvey(survey, context);
@@ -93,13 +95,13 @@ public class MainActivity extends Activity {
         for(Question q : survey.getQuestions()) {
 
             TextView textView = new TextView(context);
-            textView.setId(("textView" + q.getText()).hashCode());
-            textView.setText(q.getText());
+            textView.setId(("textView" + q.getContent()).hashCode());
+            textView.setText(q.getContent());
             textView.setTextColor(Color.parseColor("#f7f0aa"));
             textView.setTextSize(Util.convertToDp(10, context));
 
             SeekBar seekBar = new SeekBar(context);
-            seekBar.setId(("seekBar" + q.getText()).hashCode());
+            seekBar.setId(("seekBar" + q.getContent()).hashCode());
             seekBar.setMax(5);
 
             questionSeekbar.put(textView.getId(), seekBar.getId());
@@ -142,13 +144,13 @@ public class MainActivity extends Activity {
         surveyResult.setSurveyId(survey.getId());
 
         for(Question q : survey.getQuestions()) {
-            int seekBarId = ("seekBar" + q.getText()).hashCode();
+            int seekBarId = ("seekBar" + q.getContent()).hashCode();
             SeekBar seekBar = (SeekBar) findViewById(seekBarId);
 
             QuestionResponse questionResponse = new QuestionResponse();
             questionResponse.setQuestion(q);
             questionResponse.setResponse(Integer.toString(seekBar.getProgress()));
-            surveyResult.getQuestionResults().add(questionResponse);
+            surveyResult.getQuestionResponses().add(questionResponse);
         }
         return surveyResult;
     }

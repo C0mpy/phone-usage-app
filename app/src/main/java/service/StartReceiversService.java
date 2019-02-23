@@ -41,15 +41,23 @@ public class StartReceiversService extends Service {
         networkStateReceiver = null;
     }
     private void registerReceivers() {
+        registerScreenOnReceiver();
+        registerScreenOffReceiver();
+        registerNetworkStateReceiver();
+    }
+
+    private void registerScreenOnReceiver() {
         try {
             unregisterReceiver(screenOnReceiver);
         } catch (Exception e) {
-            Log.wtf("myTag", "screenOnReceiver is already active");
+            Log.i("myTag", "screenOnReceiver is already active");
         }
         screenOnReceiver = new ScreenOnReceiver();
         IntentFilter filterOn = new IntentFilter(Intent.ACTION_SCREEN_ON);
         registerReceiver(screenOnReceiver, filterOn);
+    }
 
+    private void registerScreenOffReceiver() {
         try {
             unregisterReceiver(screenOffReceiver);
         } catch (Exception e) {
@@ -58,7 +66,9 @@ public class StartReceiversService extends Service {
         screenOffReceiver = new ScreenOffReceiver();
         IntentFilter filterOff = new IntentFilter(Intent.ACTION_SCREEN_OFF);
         registerReceiver(screenOffReceiver, filterOff);
+    }
 
+    private void registerNetworkStateReceiver() {
         try {
             unregisterReceiver(networkStateReceiver);
         } catch (Exception e) {

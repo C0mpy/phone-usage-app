@@ -45,6 +45,10 @@ public class JSONDataAccess {
         writeJsonObject("surveyResult", surveyResult, context);
     }
 
+    public static SurveyResult readSurveyResult(Context context) {
+        return gson.fromJson(getJsonString("surveyResult", context), SurveyResult.class);
+    }
+
     public static Metadata readMetadata(Context context) {
         return gson.fromJson(getJsonString("metadata", context), Metadata.class);
     }
