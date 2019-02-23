@@ -10,6 +10,7 @@
     tools:context="com.example.MainActivity">
 
     <TextView
+        android:id="@+id/surveyTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -18,7 +19,19 @@
         android:layout_marginRight="2dp"
         android:layout_marginBottom="3dp"
         android:gravity="center"
-        android:text="Please rank the following statements on a scale of 1 to 5."
+        android:textColor="@android:color/background_light"
+        android:textSize="25dp" />
+
+    <TextView
+        android:id="@+id/surveyDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginBottom="3dp"
+        android:gravity="center"
         android:textColor="@android:color/background_light"
         android:textSize="25dp" />
 

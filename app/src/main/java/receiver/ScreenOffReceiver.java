@@ -16,8 +16,11 @@ import model.PhoneUsage;
 
 public class ScreenOffReceiver extends BroadcastReceiver {
 
+    Context context;
+
     @Override
     public void onReceive(final Context context, Intent intent) {
+        this.context = context;
         final PhoneUsage phoneUsageData = JSONDataAccess.readCurrentPhoneUsageData(context);
         if(phoneUsageData.getStartTime() != 0L) {
             phoneUsageData.setEndTime(System.currentTimeMillis());
@@ -41,6 +44,6 @@ public class ScreenOffReceiver extends BroadcastReceiver {
             }).start();
         }
 
-        Log.wtf("sumtag","OFF!");
+        Log.d("ScreenOffReceiver","Screen is OFF!");
     }
 }

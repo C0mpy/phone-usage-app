@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -92,6 +93,12 @@ public class MainActivity extends Activity {
 
     private void displaySurvey() {
 
+        TextView surveyTitle = (TextView)findViewById(R.id.surveyTitle);
+        surveyTitle.setText(survey.getTitle());
+
+        TextView surveyDescription = (TextView)findViewById(R.id.surveyDescription);
+        surveyDescription.setText(survey.getDescription());
+
         for(Question q : survey.getQuestions()) {
 
             TextView textView = new TextView(context);
@@ -119,7 +126,14 @@ public class MainActivity extends Activity {
         Button finishButton = new Button(context);
         finishButton.setId("finishButton".hashCode());
         finishButton.setText("FINISH");
-        finishButton.setTextSize(Util.convertToDp(10, context));
+        finishButton.setTextSize(Util.convertToDp(15, context));
+
+        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.MATCH_PARENT,
+                ConstraintLayout.LayoutParams.MATCH_PARENT
+        );
+        params.setMargins(0, 0, 0, 50);
+        finishButton.setLayoutParams(params);
 
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override

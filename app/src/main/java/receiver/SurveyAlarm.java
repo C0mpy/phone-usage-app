@@ -29,9 +29,8 @@ public class SurveyAlarm  {
                     currentTimeInMillis + 3000000,
                     3000000,
                     pendingIntent);
-            Log.wtf("myTag", "Alarm is NOT active");
         } else {
-            Log.wtf("myTag", "Alarm is already active");
+            Log.d("AlarmManager", "Alarm is already active!");
         }
     }
 }
