@@ -8,6 +8,9 @@ import android.util.Log;
 
 import com.example.MainActivity;
 
+import dao.database.metadata.MetadataDbHelper;
+import util.Util;
+
 public class SurveyAlarm  {
 
     private static AlarmManager alarmManager;
@@ -23,11 +26,15 @@ public class SurveyAlarm  {
 
         if (!alarmUp) {
             long currentTimeInMillis = System.currentTimeMillis();
+
+            MetadataDbHelper metadataDbHelper = MetadataDbHelper.getInstance(context);
+            Integer hoursToNextSurvey = metadataDbHelper.findOne().getTimeToNextSurveyInHours();
+
             alarmManager = (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
             alarmManager.setRepeating(
                     AlarmManager.RTC_WAKEUP,
-                    currentTimeInMillis + 3000000,
-                    3000000,
+                    currentTimeInMillis + Util.toMillis(hoursToNextSurvey),
+                    0,
                     pendingIntent);
         } else {
             Log.d("AlarmManager", "Alarm is already active!");

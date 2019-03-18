@@ -10,6 +10,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import dao.JSONDataAccess;
+import dao.database.phone_usage.PhoneUsageDbHelper;
 import model.PhoneUsage;
 
 public class ScreenOnReceiver extends BroadcastReceiver {

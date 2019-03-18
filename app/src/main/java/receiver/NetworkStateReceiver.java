@@ -4,16 +4,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -22,9 +23,12 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 
-import dao.JSONDataAccess;
-import dao.database.PhoneUsageContract;
-import dao.database.PhoneUsageDbHelper;
+import dao.database.metadata.MetadataDbHelper;
+import dao.database.phone_usage.PhoneUsageContract;
+import dao.database.phone_usage.PhoneUsageDbHelper;
+import dao.database.survey.SurveyDbHelper;
+import dao.database.survey_result.SurveyResultDbHelper;
+import mapper.SurveyResultMapper;
 import model.Metadata;
 import model.Survey;
 import model.SurveyResult;
@@ -33,14 +37,16 @@ import model.UserResult;
 public class NetworkStateReceiver extends BroadcastReceiver {
 
     private Context context;
+    private MetadataDbHelper metadataDbHelper;
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
 
         this.context = context;
+        metadataDbHelper = MetadataDbHelper.getInstance(context);
 
         if (hasInternetConnection()) {
-            Metadata metadata = JSONDataAccess.readMetadata(context);
+            Metadata metadata = metadataDbHelper.findOne();
             if (!metadata.getSurveyFetchedFromServer()) {
                 fetchSurveyFromServer();
             }
@@ -67,12 +73,14 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             @Override
             public void run() {
                 try {
-                    Metadata metadata = JSONDataAccess.readMetadata(context);
+                    Metadata metadata = metadataDbHelper.findOne();
                     Survey activeSurvey = getActiveSurvey();
                     if (activeSurvey != null) {
-                        JSONDataAccess.writeSurvey(activeSurvey, context);
+                        SurveyDbHelper surveyDbHelper = SurveyDbHelper.getInstance(context);
+                        surveyDbHelper.removeAll();
+                        surveyDbHelper.save(activeSurvey);
                         metadata.setSurveyFetchedFromServer(true);
-                        JSONDataAccess.writeMetadata(metadata, context);
+//                        metadataDbHelper.save(metadata);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -83,7 +91,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
     private Survey getActiveSurvey() {
         try {
-            URL url = new URL("https://phone-usage-server.herokuapp.com/active-survey");
+//            URL url = new URL("https://phone-usage-server.herokuapp.com/active-survey");
+            URL url = new URL("http://10.0.2.2:3000/active-survey");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestProperty("accept", "application/json");
             con.setRequestMethod("GET");
@@ -114,12 +123,13 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Metadata metadata = JSONDataAccess.readMetadata(context);
-                SurveyResult surveyResult = JSONDataAccess.readSurveyResult(context);
+                Metadata metadata = metadataDbHelper.findOne();
+                SurveyResultDbHelper surveyResultDbHelper = SurveyResultDbHelper.getInstance(context);
+                SurveyResult surveyResult = surveyResultDbHelper.findOne();
                 String surveyResultId = sendSurveyResult(surveyResult);
                 sendUserResult(surveyResultId, metadata);
                 metadata.setSurveyResultsSentToServer(true);
-                JSONDataAccess.writeMetadata(metadata, context);
+//                metadataDbHelper.save(metadata);
             }
         }).start();
     }
@@ -127,7 +137,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     private String sendSurveyResult(SurveyResult surveyResult) {
         try {
             System.setProperty("http.keepAlive", "false");
-            URL url = new URL("https://phone-usage-server.herokuapp.com/survey_results");
+//            URL url = new URL("https://phone-usage-server.herokuapp.com/survey_results");
+            URL url = new URL("http://10.0.2.2:3000/survey_results");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             con.setRequestProperty("Accept", "application/json");
@@ -135,7 +146,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             con.setDoOutput(true);
 
             Gson gson = new Gson();
-            String surveyResultJsonString = gson.toJson(surveyResult);
+            String surveyResultJsonString = gson.toJson(SurveyResultMapper.mapToDTO(surveyResult));
             OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
             wr.write(surveyResultJsonString);
             wr.close();
@@ -160,48 +171,47 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     public void sendUserResult(String surveyResultId, Metadata metadata) {
         try {
             System.setProperty("http.keepAlive", "false");
-            URL url = new URL("https://phone-usage-server.herokuapp.com/user_results");
+//            URL url = new URL("https://phone-usage-server.herokuapp.com/user_results");
+            URL url = new URL("http://10.0.2.2:3000/user_results");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             con.setRequestProperty("Accept", "application/json");
             con.setRequestMethod("POST");
             con.setDoOutput(true);
 
-            String phoneUsage = sumPhoneUsage();
+
+            String phoneUsage = PhoneUsageDbHelper.getInstance(context).sumPhoneUsage();
+            if (phoneUsage == null) {
+                phoneUsage = "0";
+            }
 
             UserResult userResult = new UserResult();
             userResult.setSurvey_result_id(surveyResultId);
             userResult.setUser_uuid(metadata.getUuid());
             userResult.setTime_spent_on_phone(phoneUsage);
-            userResult.setPeriod_start(String.valueOf(metadata.getLastSurveyTakenTime().getTime()));
+            userResult.setPeriod_start(String.valueOf(metadata.getLastSurveyTakenTime()));
             userResult.setPeriod_end(String.valueOf(System.currentTimeMillis()));
 
             Gson gson = new Gson();
-            String surveyResultJsonString = gson.toJson(userResult);
+            String userResultJsonString = gson.toJson(userResult);
             OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-            wr.write(surveyResultJsonString);
+            wr.write(userResultJsonString);
             wr.close();
+
+            InputStream stream = con.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"), 8);
+            reader.readLine();
+
+            PhoneUsageDbHelper phoneUsageDbHelper = PhoneUsageDbHelper.getInstance(context);
+            phoneUsageDbHelper.removeAll();
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("sendUserResult", "Failed to send USER RESULTS to Server!");
         }
     }
 
-    private String sumPhoneUsage() {
-        PhoneUsageDbHelper phoneUsageDbHelper = new PhoneUsageDbHelper(context);
-        SQLiteDatabase db = phoneUsageDbHelper.getWritableDatabase();
-        String sum = "";
 
-        db.beginTransaction();
-        Cursor cursor = db.rawQuery(PhoneUsageContract.SQL_SUM_PHONE_USAGE, null);
-        if (cursor.moveToFirst()) {
-            sum = cursor.getString(0);
-        }
-        cursor.close();
-        db.setTransactionSuccessful();
-        db.endTransaction();
 
-        return sum;
-    }
+
 
 }

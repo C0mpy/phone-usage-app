@@ -2,8 +2,22 @@ package model;
 
 public class QuestionResponse {
 
-    Question question;
-    String response;
+    private String foreignId;
+    private Question question;
+    private String response;
+
+    public QuestionResponse() {}
+
+    public QuestionResponse(Question question, String response) {
+        this.question = question;
+        this.response = response;
+    }
+
+    public QuestionResponse(String foreignId, Question question, String response) {
+        this.foreignId = foreignId;
+        this.question = question;
+        this.response = response;
+    }
 
     public Question getQuestion() {
         return question;

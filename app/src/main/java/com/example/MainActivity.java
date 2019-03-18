@@ -14,13 +14,13 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 
-import dao.JSONDataAccess;
+import dao.database.DatabaseHelper;
+import dao.database.metadata.MetadataDbHelper;
+import dao.database.phone_usage.PhoneUsageDbHelper;
+import dao.database.survey.SurveyDbHelper;
+import dao.database.survey_result.SurveyResultDbHelper;
 import model.Metadata;
 import model.Question;
 import model.QuestionResponse;
@@ -34,8 +34,15 @@ import util.Util;
 public class MainActivity extends Activity {
 
     Context context;
-    HashMap<Integer, Integer> questionSeekbar = new HashMap<>();
+
+    HashMap<Integer, SeekBar> questionSeekbar = new HashMap<>();
     LinearLayout questionLinearLayout;
+    Button finishButton;
+
+    MetadataDbHelper metadataDbHelper;
+    SurveyDbHelper surveyDbHelper;
+    PhoneUsageDbHelper phoneUsageDbHelper;
+
     Metadata metadata;
     Survey survey;
 
@@ -45,50 +52,40 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         context = getApplicationContext();
+        context.deleteDatabase(DatabaseHelper.DATABASE_NAME);
+
         questionLinearLayout = (LinearLayout)findViewById(R.id.questions_linear_layout);
 
-        initMetadata();
-        initSurvey();
-        initPhoneUsage();
+        metadataDbHelper = MetadataDbHelper.getInstance(context);
+        metadata = metadataDbHelper.findOne();
+        surveyDbHelper = SurveyDbHelper.getInstance(context);
+        survey = surveyDbHelper.findOne();
+        phoneUsageDbHelper = PhoneUsageDbHelper.getInstance(context);
 
         displaySurvey();
     }
 
-    private void initMetadata() {
-        Metadata metadata = new Metadata();
-        metadata.setUuid(UUID.randomUUID().toString());
-        metadata.setLastSurveyTakenTime(new Date());
-        metadata.setSurveyFetchedFromServer(false);
-        metadata.setTimeToNextSurveyInHours(24 * 7);
-        metadata.setSurveyResultsSentToServer(false);
-
-        this.metadata = JSONDataAccess.initMetadata(metadata, context);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        addListeners();
     }
 
-    private void initSurvey() {
-        Question question1 = new Question();
-        question1.setId("1");
-        question1.setContent("How would you rate your quality of sleep?");
+    private void addListeners() {
+        finishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SurveyResult surveyResult = createSurveyResult(survey);
+                saveSurveyResultAndUpdateMetadata(surveyResult, context);
 
-        Question question2 = new Question();
-        question2.setId("2");
-        question2.setContent("How would you rate your attention span?");
+                Toast.makeText(context,
+                        "Thanks for taking the survey! Next survey expected in: "
+                                + metadata.getTimeToNextSurveyInHours() / 24 + " days!",
+                        Toast.LENGTH_LONG).show();
 
-        List<Question> questions = new ArrayList<>();
-        questions.add(question1);
-        questions.add(question2);
-
-        Survey survey = new Survey();
-        survey.setId("1");
-        survey.setTitle("This is the inital Survey deployed to mobile devices.");
-        survey.setDescription("Please answer questions on a scale 1 - 5");
-        survey.setQuestions(questions);
-
-        this.survey = JSONDataAccess.initSurvey(survey, context);
-    }
-
-    private void initPhoneUsage() {
-        JSONDataAccess.initPhoneUsage(context);
+                registerReceivers();
+            }
+        });
     }
 
     private void displaySurvey() {
@@ -111,7 +108,7 @@ public class MainActivity extends Activity {
             seekBar.setId(("seekBar" + q.getContent()).hashCode());
             seekBar.setMax(5);
 
-            questionSeekbar.put(textView.getId(), seekBar.getId());
+            questionSeekbar.put(textView.getId(), seekBar);
 
             LinearLayout linearLayout = new LinearLayout(context);
             linearLayout.setPadding(10, 0, 10 ,50);
@@ -123,7 +120,7 @@ public class MainActivity extends Activity {
             questionLinearLayout.addView(linearLayout);
         }
 
-        Button finishButton = new Button(context);
+        finishButton = new Button(context);
         finishButton.setId("finishButton".hashCode());
         finishButton.setText("FINISH");
         finishButton.setTextSize(Util.convertToDp(15, context));
@@ -135,31 +132,15 @@ public class MainActivity extends Activity {
         params.setMargins(0, 0, 0, 50);
         finishButton.setLayoutParams(params);
 
-        finishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SurveyResult surveyResult = createSurveyResult(survey);
-                saveSurveyResultAndUpdateMetadata(surveyResult, context);
-
-                Toast.makeText(context,
-                        "Thanks for taking the survey! Next survey expected in: "
-                        + metadata.getTimeToNextSurveyInHours() / 24 + " days!",
-                        Toast.LENGTH_LONG).show();
-
-                registerReceivers();
-            }
-        });
-
         questionLinearLayout.addView(finishButton);
     }
 
     private SurveyResult createSurveyResult(Survey survey) {
         SurveyResult surveyResult = new SurveyResult();
-        surveyResult.setSurveyId(survey.getId());
+        surveyResult.setSurveyId(survey.getForeignId());
 
         for(Question q : survey.getQuestions()) {
-            int seekBarId = ("seekBar" + q.getContent()).hashCode();
-            SeekBar seekBar = (SeekBar) findViewById(seekBarId);
+            SeekBar seekBar = questionSeekbar.get(("textView" + q.getContent()).hashCode());
 
             QuestionResponse questionResponse = new QuestionResponse();
             questionResponse.setQuestion(q);
@@ -170,12 +151,13 @@ public class MainActivity extends Activity {
     }
 
     private void saveSurveyResultAndUpdateMetadata(SurveyResult surveyResult, Context context) {
-        JSONDataAccess.writeSurveyResult(surveyResult, context);
+        SurveyResultDbHelper surveyResultDbHelper = SurveyResultDbHelper.getInstance(context);
+        surveyResultDbHelper.save(surveyResult);
 
         metadata.setSurveyFetchedFromServer(false);
         metadata.setSurveyResultsSentToServer(false);
-        metadata.setLastSurveyTakenTime(new Date());
-        JSONDataAccess.writeMetadata(metadata, context);
+        metadata.setLastSurveyTakenTime(System.currentTimeMillis());
+        metadataDbHelper.save(metadata);
     }
 
     private void registerReceivers() {

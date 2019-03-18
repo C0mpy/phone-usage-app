@@ -4,17 +4,25 @@ import java.util.List;
 
 public class Survey {
 
-    private String id;
+    // SurveyId on server
+    private String foreignId;
     private String title;
     private String description;
     private List<Question> questions;
 
-    public String getId() {
-        return id;
+    public Survey(String foreignId, String title, String description, List<Question> questions) {
+        this.foreignId = foreignId;
+        this.title = title;
+        this.description = description;
+        this.questions = questions;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getForeignId() {
+        return foreignId;
+    }
+
+    public void setForeignId(String foreignId) {
+        this.foreignId = foreignId;
     }
 
     public String getTitle() {

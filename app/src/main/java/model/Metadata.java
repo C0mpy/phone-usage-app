@@ -1,14 +1,20 @@
 package model;
 
-import java.util.Date;
-
 public class Metadata {
 
     private String uuid;
-    private Date lastSurveyTakenTime;
+    private Long lastSurveyTakenTime;
     private Boolean surveyFetchedFromServer;
     private Boolean surveyResultsSentToServer;
     private Integer timeToNextSurveyInHours;
+
+    public Metadata(String uuid, Long lastSurveyTakenTime, Boolean surveyFetchedFromServer, Boolean surveyResultsSentToServer, Integer timeToNextSurveyInHours) {
+        this.uuid = uuid;
+        this.lastSurveyTakenTime = lastSurveyTakenTime;
+        this.surveyFetchedFromServer = surveyFetchedFromServer;
+        this.surveyResultsSentToServer = surveyResultsSentToServer;
+        this.timeToNextSurveyInHours = timeToNextSurveyInHours;
+    }
 
     public String getUuid() {
         return uuid;
@@ -18,11 +24,11 @@ public class Metadata {
         this.uuid = uuid;
     }
 
-    public Date getLastSurveyTakenTime() {
+    public Long getLastSurveyTakenTime() {
         return lastSurveyTakenTime;
     }
 
-    public void setLastSurveyTakenTime(Date lastSurveyTakenTime) {
+    public void setLastSurveyTakenTime(Long lastSurveyTakenTime) {
         this.lastSurveyTakenTime = lastSurveyTakenTime;
     }
 

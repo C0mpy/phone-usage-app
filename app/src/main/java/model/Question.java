@@ -2,15 +2,23 @@ package model;
 
 public class Question {
 
-    private String id;
+    private String foreignId;
     private String content;
 
-    public String getId() {
-        return id;
+    public Question() {
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public Question(String foreignId, String content) {
+        this.foreignId = foreignId;
+        this.content = content;
+    }
+
+    public String getForeignId() {
+        return foreignId;
+    }
+
+    public void setForeignId(String foreignId) {
+        this.foreignId = foreignId;
     }
 
     public String getContent() {

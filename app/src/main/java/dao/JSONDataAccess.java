@@ -22,52 +22,6 @@ public class JSONDataAccess {
 
     private static Gson gson = new Gson();
 
-    public static Survey readSurvey(Context context) {
-        return gson.fromJson(getJsonString("survey", context), Survey.class);
-    }
-
-    public static Survey initSurvey(Survey survey, Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("survey", MODE_PRIVATE);
-        if(!prefs.contains("survey")){
-            writeSurvey(survey, context);
-            return survey;
-        }
-        else {
-            return readSurvey(context);
-        }
-    }
-
-    public static void writeSurvey(Survey survey, Context context) {
-        writeJsonObject("survey", survey, context);
-    }
-
-    public static void writeSurveyResult(SurveyResult surveyResult, Context context) {
-        writeJsonObject("surveyResult", surveyResult, context);
-    }
-
-    public static SurveyResult readSurveyResult(Context context) {
-        return gson.fromJson(getJsonString("surveyResult", context), SurveyResult.class);
-    }
-
-    public static Metadata readMetadata(Context context) {
-        return gson.fromJson(getJsonString("metadata", context), Metadata.class);
-    }
-
-    public static Metadata initMetadata(Metadata metadata, Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("metadata", MODE_PRIVATE);
-        if(!prefs.contains("metadata")){
-            writeJsonObject("metadata", metadata, context);
-            return metadata;
-        }
-        else {
-            return readMetadata(context);
-        }
-    }
-
-    public static void writeMetadata(Metadata metadata, Context context) {
-        writeJsonObject("metadata", metadata, context);
-    }
-
     public static void initPhoneUsage(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("phoneUsage", MODE_PRIVATE);
         PhoneUsage phoneUsage = new PhoneUsage();
@@ -77,8 +31,6 @@ public class JSONDataAccess {
 
     public static void writeCurrentPhoneUsageData(PhoneUsage phoneUsageData, Context context) {
         writeJsonObject("phoneUsage", phoneUsageData, context);
-        PhoneUsage pu = readCurrentPhoneUsageData(context);
-        System.out.println("we");
     }
 
     public static PhoneUsage readCurrentPhoneUsageData(Context context) {
