@@ -3,8 +3,9 @@ package mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ContentValues;
+import dao.database.question_response.QuestionResponseContract;
 import dto.QuestionResponseDTO;
-import model.Question;
 import model.QuestionResponse;
 
 public class QuestionResponseMapper {
@@ -37,5 +38,13 @@ public class QuestionResponseMapper {
         dto.setResponse(model.getResponse());
         dto.setQuestion(QuestionMapper.mapToDto(model.getQuestion()));
         return dto;
+    }
+
+    public static ContentValues mapToContentValues(QuestionResponse questionResponse, String surveyResultId) {
+        ContentValues values = new ContentValues();
+        values.put(QuestionResponseContract.QuestionResponseEntry.COLUMN_RESPONSE, questionResponse.getResponse());
+        values.put(QuestionResponseContract.QuestionResponseEntry.COLUMN_QUESTION_ID, questionResponse.getQuestion().getForeignId());
+        values.put(QuestionResponseContract.QuestionResponseEntry.COLUMN_SURVEY_RESULT_ID, surveyResultId);
+        return values;
     }
 }

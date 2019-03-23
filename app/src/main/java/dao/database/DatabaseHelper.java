@@ -2,11 +2,9 @@ package dao.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import java.util.UUID;
-
 import dao.database.metadata.MetadataContract;
 import dao.database.phone_usage.PhoneUsageContract;
 import dao.database.question.QuestionContract;
@@ -14,16 +12,20 @@ import dao.database.question_response.QuestionResponseContract;
 import dao.database.survey.SurveyContract;
 import dao.database.survey_result.SurveyResultContract;
 
+import java.util.UUID;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
     private static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "phone_usage.db";
 
+    private SQLiteDatabase db;
     private static DatabaseHelper mInstance = null;
 
     private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.db = getWritableDatabase();
     }
 
     public static synchronized DatabaseHelper getInstance(Context ctx) {
@@ -77,5 +79,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
+
+    public void beginTransaction() {
+        getWritableDatabase().beginTransaction();
+    }
+
+    public void endTransaction() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
 
 }

@@ -19,6 +19,14 @@ public class QuestionResponse {
         this.response = response;
     }
 
+    public String getForeignId() {
+        return foreignId;
+    }
+
+    public void setForeignId(String foreignId) {
+        this.foreignId = foreignId;
+    }
+
     public Question getQuestion() {
         return question;
     }

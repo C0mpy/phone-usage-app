@@ -7,14 +7,15 @@ import android.util.Log;
 
 import com.example.MainActivity;
 
-public class MyBroadcastReceiver extends BroadcastReceiver {
+import service.StartReceiversService;
+
+public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent i = new Intent("com.example.MainActivity");
-        i.setClass(context, MainActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(i);
+        Intent startIntent = new Intent(context, StartReceiversService.class);
+        context.startService(startIntent);
+        SurveyAlarm.start(context);
     }
 
 }

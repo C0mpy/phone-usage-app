@@ -42,6 +42,7 @@ public class MainActivity extends Activity {
     MetadataDbHelper metadataDbHelper;
     SurveyDbHelper surveyDbHelper;
     PhoneUsageDbHelper phoneUsageDbHelper;
+    SurveyResultDbHelper surveyResultDbHelper;
 
     Metadata metadata;
     Survey survey;
@@ -50,19 +51,28 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         context = getApplicationContext();
         context.deleteDatabase(DatabaseHelper.DATABASE_NAME);
+        fetchDbHelpers();
+        fetchDbData();
 
-        questionLinearLayout = (LinearLayout)findViewById(R.id.questions_linear_layout);
-
-        metadataDbHelper = MetadataDbHelper.getInstance(context);
-        metadata = metadataDbHelper.findOne();
-        surveyDbHelper = SurveyDbHelper.getInstance(context);
-        survey = surveyDbHelper.findOne();
-        phoneUsageDbHelper = PhoneUsageDbHelper.getInstance(context);
-
+        questionLinearLayout = findViewById(R.id.questions_linear_layout);
         displaySurvey();
+    }
+
+    private void fetchDbHelpers() {
+        metadataDbHelper = MetadataDbHelper.getInstance(context);
+        surveyDbHelper = SurveyDbHelper.getInstance(context);
+        phoneUsageDbHelper = PhoneUsageDbHelper.getInstance(context);
+        surveyResultDbHelper = SurveyResultDbHelper.getInstance(context);
+//        databaseHelper = DatabaseHelper.getInstance(context);
+    }
+
+    private void fetchDbData() {
+//        databaseHelper.beginTransaction();
+        metadata = metadataDbHelper.findOne();
+        survey = surveyDbHelper.findOne();
+//        databaseHelper.endTransaction();
     }
 
     @Override
@@ -151,13 +161,16 @@ public class MainActivity extends Activity {
     }
 
     private void saveSurveyResultAndUpdateMetadata(SurveyResult surveyResult, Context context) {
-        SurveyResultDbHelper surveyResultDbHelper = SurveyResultDbHelper.getInstance(context);
+//        databaseHelper.beginTransaction();
+
         surveyResultDbHelper.save(surveyResult);
 
         metadata.setSurveyFetchedFromServer(false);
         metadata.setSurveyResultsSentToServer(false);
         metadata.setLastSurveyTakenTime(System.currentTimeMillis());
         metadataDbHelper.save(metadata);
+
+//        databaseHelper.endTransaction();
     }
 
     private void registerReceivers() {

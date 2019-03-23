@@ -1,5 +1,8 @@
 package mapper;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import dao.database.question.QuestionContract;
 import dto.QuestionDTO;
 import model.Question;
 
@@ -19,4 +22,17 @@ public class QuestionMapper {
         return dto;
     }
 
+    public static ContentValues mapToContentValues(Question question, String surveyId) {
+        ContentValues values = new ContentValues();
+        values.put(QuestionContract.QuestionEntry.COLUMN_FOREIGN_ID, question.getForeignId());
+        values.put(QuestionContract.QuestionEntry.COLUMN_CONTENT, question.getContent());
+        values.put(QuestionContract.QuestionEntry.COLUMN_SURVEY_ID, surveyId);
+        return values;
+    }
+
+    public static Question mapToModel(Cursor cursor) {
+        String foreignId = cursor.getString(cursor.getColumnIndexOrThrow(QuestionContract.QuestionEntry.COLUMN_FOREIGN_ID));
+        String content = cursor.getString(cursor.getColumnIndexOrThrow(QuestionContract.QuestionEntry.COLUMN_CONTENT));
+        return new Question(foreignId, content);
+    }
 }

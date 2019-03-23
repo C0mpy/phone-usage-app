@@ -20,12 +20,15 @@ public class SurveyResultDbHelper {
     private static SQLiteDatabase db;
     private static Context context;
     private static DatabaseHelper databaseHelper;
+    private static QuestionResponseDbHelper questionResponseDbHelper;
     private static SurveyResultDbHelper sInstance;
 
     private SurveyResultDbHelper(Context _context) {
         context = _context;
         databaseHelper = DatabaseHelper.getInstance(context);
         db = databaseHelper.getWritableDatabase();
+        questionResponseDbHelper = QuestionResponseDbHelper.getInstance(context);
+
     }
 
     public static synchronized SurveyResultDbHelper getInstance(Context context) {
@@ -35,55 +38,15 @@ public class SurveyResultDbHelper {
         return sInstance;
     }
 
-    public Integer count() {
-        Integer result = null;
-        db.beginTransaction();
-        Cursor cursor = db.rawQuery(SurveyResultContract.COUNT_ENTRIES, null);
-        if (cursor.moveToFirst()) {
-            String str = cursor.getString(0);
-            result = Integer.valueOf(str);
-        }
-        db.setTransactionSuccessful();
-        db.endTransaction();
-        return result;
-    }
-
     public SurveyResult save(SurveyResult surveyResult) {
-        db.beginTransaction();
-
         ContentValues values = new ContentValues();
         values.put(SurveyResultContract.SurveyResultEntry.COLUMN_SURVEY_ID, surveyResult.getSurveyId());
 
         String id = String.valueOf(db.insert(SurveyResultContract.SurveyResultEntry.TABLE_NAME, null, values));
         surveyResult.setId(id);
 
-        QuestionResponseDbHelper questionResponseDbHelper = QuestionResponseDbHelper.getInstance(context);
         questionResponseDbHelper.saveAll(surveyResult.getQuestionResponses(), String.valueOf(surveyResult.getId()));
-
-        db.setTransactionSuccessful();
-        db.endTransaction();
         return surveyResult;
-    }
-
-    public List<SurveyResult> findAll() {
-        List<SurveyResult> result = new ArrayList<>();
-        db.beginTransaction();
-        Cursor cursor = db.rawQuery(SurveyResultContract.FIND, null);
-        if (cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-                String id = cursor.getString(cursor.getColumnIndexOrThrow(BaseColumns._ID));
-                String surveyId = cursor.getString(cursor.getColumnIndexOrThrow(SurveyResultContract.SurveyResultEntry.COLUMN_SURVEY_ID));
-
-                QuestionResponseDbHelper questionResponseDbHelper = QuestionResponseDbHelper.getInstance(context);
-                List<QuestionResponse> questionResponses = questionResponseDbHelper.findWhereSurveyResultId(id);
-
-                result.add(new SurveyResult(id, surveyId, questionResponses));
-                cursor.moveToNext();
-            }
-        }
-        db.setTransactionSuccessful();
-        db.endTransaction();
-        return result;
     }
 
     public SurveyResult findOne() {
@@ -96,6 +59,33 @@ public class SurveyResultDbHelper {
             return findAll().get(0);
         }
         return null;
+    }
+
+    private Integer count() {
+        Integer result = null;
+        Cursor cursor = db.rawQuery(SurveyResultContract.COUNT_ENTRIES, null);
+        if (cursor.moveToFirst()) {
+            result = cursor.getInt(0);
+        }
+        return result;
+    }
+
+    private List<SurveyResult> findAll() {
+        List<SurveyResult> result = new ArrayList<>();
+        Cursor cursor = db.rawQuery(SurveyResultContract.FIND, null);
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                String id = cursor.getString(cursor.getColumnIndexOrThrow(BaseColumns._ID));
+                String surveyId = cursor.getString(cursor.getColumnIndexOrThrow(SurveyResultContract.SurveyResultEntry.COLUMN_SURVEY_ID));
+
+                List<QuestionResponse> questionResponses = questionResponseDbHelper.findWhereSurveyResultId(id);
+
+                result.add(new SurveyResult(id, surveyId, questionResponses));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return result;
     }
 
 }

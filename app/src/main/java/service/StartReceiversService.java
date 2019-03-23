@@ -40,6 +40,7 @@ public class StartReceiversService extends Service {
         screenOffReceiver = null;
         networkStateReceiver = null;
     }
+
     private void registerReceivers() {
         registerScreenOnReceiver();
         registerScreenOffReceiver();
@@ -50,7 +51,7 @@ public class StartReceiversService extends Service {
         try {
             unregisterReceiver(screenOnReceiver);
         } catch (Exception e) {
-            Log.i("myTag", "screenOnReceiver is already active");
+            Log.d("StartReceiversService", "screenOnReceiver is already active");
         }
         screenOnReceiver = new ScreenOnReceiver();
         IntentFilter filterOn = new IntentFilter(Intent.ACTION_SCREEN_ON);
@@ -61,9 +62,9 @@ public class StartReceiversService extends Service {
         try {
             unregisterReceiver(screenOffReceiver);
         } catch (Exception e) {
-            Log.wtf("myTag", "screenOffReceiver is already active");
+            Log.d("StartReceiversService", "screenOffReceiver is already active");
         }
-        screenOffReceiver = new ScreenOffReceiver();
+        screenOffReceiver = new ScreenOffReceiver(this);
         IntentFilter filterOff = new IntentFilter(Intent.ACTION_SCREEN_OFF);
         registerReceiver(screenOffReceiver, filterOff);
     }
@@ -72,9 +73,9 @@ public class StartReceiversService extends Service {
         try {
             unregisterReceiver(networkStateReceiver);
         } catch (Exception e) {
-            Log.wtf("myTag", "networkStateReceiver is already active");
+            Log.d("StartReceiversService", "networkStateReceiver is already active");
         }
-        networkStateReceiver = new NetworkStateReceiver();
+        networkStateReceiver = new NetworkStateReceiver(this);
         IntentFilter filterNetworkOn = new IntentFilter();
         filterNetworkOn.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(networkStateReceiver, filterNetworkOn);

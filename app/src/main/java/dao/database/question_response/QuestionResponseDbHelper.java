@@ -10,6 +10,7 @@ import java.util.List;
 
 import dao.database.DatabaseHelper;
 import dao.database.question.QuestionDbHelper;
+import mapper.QuestionResponseMapper;
 import model.Question;
 import model.QuestionResponse;
 
@@ -18,11 +19,13 @@ public class QuestionResponseDbHelper {
     private static SQLiteDatabase db;
     private static Context context;
     private static DatabaseHelper databaseHelper;
+    private static QuestionDbHelper questionDbHelper;
     private static QuestionResponseDbHelper sInstance;
 
     private QuestionResponseDbHelper(Context _context) {
         context = _context;
         databaseHelper = DatabaseHelper.getInstance(context);
+        questionDbHelper = QuestionDbHelper.getInstance(context);
         db = databaseHelper.getWritableDatabase();
     }
 
@@ -33,46 +36,32 @@ public class QuestionResponseDbHelper {
         return sInstance;
     }
 
-    public void save(QuestionResponse questionResponse, String surveyResultId) {
-        db.beginTransaction();
-
-        ContentValues values = new ContentValues();
-        values.put(QuestionResponseContract.QuestionResponseEntry.COLUMN_RESPONSE, questionResponse.getResponse());
-        values.put(QuestionResponseContract.QuestionResponseEntry.COLUMN_QUESTION_ID, questionResponse.getQuestion().getForeignId());
-        values.put(QuestionResponseContract.QuestionResponseEntry.COLUMN_SURVEY_RESULT_ID, surveyResultId);
-
-        db.insert(QuestionResponseContract.QuestionResponseEntry.TABLE_NAME, null, values);
-
-        db.setTransactionSuccessful();
-        db.endTransaction();
-    }
-
     public void saveAll(List<QuestionResponse> questionResponseList, String surveyResultId) {
         for(QuestionResponse qr : questionResponseList) {
             save(qr, surveyResultId);
         }
     }
 
+    private void save(QuestionResponse questionResponse, String surveyResultId) {
+        ContentValues contentValues = QuestionResponseMapper.mapToContentValues(questionResponse, surveyResultId);
+        db.insert(QuestionResponseContract.QuestionResponseEntry.TABLE_NAME, null, contentValues);
+    }
+
     public List<QuestionResponse> findWhereSurveyResultId(String surveyResultId) {
         List<QuestionResponse> result = new ArrayList<>();
-        db.beginTransaction();
-
         Cursor cursor = db.rawQuery(QuestionResponseContract.FIND, new String[]{surveyResultId});
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 String response = cursor.getString(cursor.getColumnIndexOrThrow(QuestionResponseContract.QuestionResponseEntry.COLUMN_RESPONSE));
                 String questionId = cursor.getString(cursor.getColumnIndexOrThrow(QuestionResponseContract.QuestionResponseEntry.COLUMN_QUESTION_ID));
 
-                QuestionDbHelper questionDbHelper = QuestionDbHelper.getInstance(context);
                 Question question = questionDbHelper.find(questionId);
 
                 result.add(new QuestionResponse(question, response));
                 cursor.moveToNext();
             }
+            cursor.close();
         }
-        db.setTransactionSuccessful();
-        db.endTransaction();
-
         return result;
     }
 
