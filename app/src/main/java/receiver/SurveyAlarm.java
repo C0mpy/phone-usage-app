@@ -16,13 +16,10 @@ public class SurveyAlarm  {
     private static AlarmManager alarmManager;
 
     public static void start(Context context) {
-
         Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-        boolean alarmUp = (PendingIntent.getBroadcast(context, 0,
-                intent,
-                PendingIntent.FLAG_NO_CREATE) != null);
+        boolean alarmUp = (PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_NO_CREATE) != null);
 
         if (!alarmUp) {
             long currentTimeInMillis = System.currentTimeMillis();
@@ -33,8 +30,8 @@ public class SurveyAlarm  {
             alarmManager = (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
             alarmManager.setRepeating(
                     AlarmManager.RTC_WAKEUP,
-                    currentTimeInMillis + Util.toMillis(hoursToNextSurvey),
-                    0,
+                    currentTimeInMillis + 120000,
+                    120000,
                     pendingIntent);
         } else {
             Log.d("AlarmManager", "Alarm is already active!");

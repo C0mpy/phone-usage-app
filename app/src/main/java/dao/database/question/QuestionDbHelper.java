@@ -21,6 +21,7 @@ public class QuestionDbHelper {
         this.context = context;
         databaseHelper = DatabaseHelper.getInstance(context);
         db = databaseHelper.getWritableDatabase();
+        db.enableWriteAheadLogging();
     }
 
     public static synchronized QuestionDbHelper getInstance(Context context) {

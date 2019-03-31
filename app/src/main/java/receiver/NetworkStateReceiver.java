@@ -7,15 +7,19 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 import com.google.gson.Gson;
+import dao.JSONDataAccess;
 import dao.database.DatabaseHelper;
 import dao.database.metadata.MetadataDbHelper;
 import dao.database.phone_usage.PhoneUsageDbHelper;
 import dao.database.survey.SurveyDbHelper;
 import dao.database.survey_result.SurveyResultDbHelper;
+import dto.SurveyDTO;
 import dto.UserResultDTO;
+import mapper.SurveyMapper;
 import mapper.SurveyResultMapper;
 import mapper.UserResultMapper;
 import model.Metadata;
+import model.PhoneUsage;
 import model.Survey;
 import model.SurveyResult;
 
@@ -36,6 +40,9 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     private SurveyDbHelper surveyDbHelper;
     private Gson gson;
 
+    public static final String SERVER_PATH = "https://phone-usage-server.herokuapp.com/";
+//    public static final String SERVER_PATH = "http://10.0.2.2:3000/";
+
     public NetworkStateReceiver(Context context) {
         this.context = context;
         metadataDbHelper = MetadataDbHelper.getInstance(context);
@@ -49,7 +56,6 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         if (hasInternetConnection()) {
-            databaseHelper.beginTransaction();
             Metadata metadata = metadataDbHelper.findOne();
             if (!metadata.getSurveyFetchedFromServer()) {
                 fetchSurveyFromServer();
@@ -58,7 +64,6 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             if (!metadata.getSurveyResultsSentToServer()) {
                 sendResultsToServer();
             }
-            databaseHelper.endTransaction();
         }
     }
 
@@ -83,7 +88,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                     surveyDbHelper.removeAll();
                     surveyDbHelper.save(activeSurvey);
                     metadata.setSurveyFetchedFromServer(true);
-                    //                        metadataDbHelper.save(metadata);
+                    metadataDbHelper.save(metadata);
                 }
             }
         }).start();
@@ -91,7 +96,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
     private Survey getActiveSurvey() {
         StringBuffer content = sendRequestToServer("active-survey", null);
-        return gson.fromJson(content.toString(), Survey.class);
+        SurveyDTO dto = gson.fromJson(content.toString(), SurveyDTO.class);
+        return SurveyMapper.toModel(dto);
     }
 
     private void sendResultsToServer() {
@@ -102,8 +108,9 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 SurveyResult surveyResult = surveyResultDbHelper.findOne();
                 String surveyResultId = sendSurveyResult(surveyResult);
                 sendUserResult(surveyResultId, metadata);
-                //                metadata.setSurveyResultsSentToServer(true);
-                //                metadataDbHelper.save(metadata);
+                surveyResultDbHelper.removeAll();
+                metadata.setSurveyResultsSentToServer(true);
+                metadataDbHelper.save(metadata);
             }
         }).start();
     }
@@ -133,8 +140,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     private StringBuffer sendRequestToServer(String httpPath, String jsonData) {
         try {
             System.setProperty("http.keepAlive", "false");
-            //            URL url = new URL("https://phone-usage-server.herokuapp.com/user_results");
-            URL url = new URL("http://10.0.2.2:3000/" + httpPath);
+            URL url = new URL(SERVER_PATH + httpPath);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestProperty("Accept", "application/json");
 

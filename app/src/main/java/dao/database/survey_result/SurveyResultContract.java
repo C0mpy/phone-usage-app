@@ -15,6 +15,9 @@ public class SurveyResultContract {
     public static final String FIND =
             "SELECT * FROM " + SurveyResultEntry.TABLE_NAME;
 
+    public static final String SQL_DELETE_ENTRIES =
+          "DELETE FROM " + SurveyResultEntry.TABLE_NAME;
+
     public static class SurveyResultEntry implements BaseColumns {
 
         public static final String TABLE_NAME = "survey_result";

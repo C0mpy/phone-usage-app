@@ -24,6 +24,7 @@ public class MetadataDbHelper {
         context = _context;
         databaseHelper = DatabaseHelper.getInstance(context);
         db = databaseHelper.getWritableDatabase();
+        db.enableWriteAheadLogging();
     }
 
     public static synchronized MetadataDbHelper getInstance(Context context) {

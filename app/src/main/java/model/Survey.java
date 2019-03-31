@@ -10,6 +10,8 @@ public class Survey {
     private String description;
     private List<Question> questions;
 
+    public Survey() {}
+
     public Survey(String foreignId, String title, String description, List<Question> questions) {
         this.foreignId = foreignId;
         this.title = title;

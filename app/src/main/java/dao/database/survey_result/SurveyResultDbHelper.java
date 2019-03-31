@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.database.DatabaseHelper;
+import dao.database.question.QuestionContract;
 import dao.database.question_response.QuestionResponseDbHelper;
 import model.QuestionResponse;
+import model.Survey;
 import model.SurveyResult;
 
 public class SurveyResultDbHelper {
@@ -27,8 +29,8 @@ public class SurveyResultDbHelper {
         context = _context;
         databaseHelper = DatabaseHelper.getInstance(context);
         db = databaseHelper.getWritableDatabase();
+        db.enableWriteAheadLogging();
         questionResponseDbHelper = QuestionResponseDbHelper.getInstance(context);
-
     }
 
     public static synchronized SurveyResultDbHelper getInstance(Context context) {
@@ -54,7 +56,9 @@ public class SurveyResultDbHelper {
         if(count == 0) {
             Log.w("SurveyResDbHelper.init", "There is no SurveyResult Entity in DB");
         } else if (count > 1) {
-            Log.w("SurveyResDbHelper.init", "There is more than one SurveyResult Entity in DB");
+            Log.e("SurveyResDbHelper.init", "There is more than one SurveyResult Entity in DB");
+            List<SurveyResult> surveyResults = findAll();
+            return surveyResults.get(surveyResults.size() - 1);
         } else {
             return findAll().get(0);
         }
@@ -86,6 +90,12 @@ public class SurveyResultDbHelper {
         }
         cursor.close();
         return result;
+    }
+
+    public void removeAll() {
+        Cursor cursor = db.rawQuery(SurveyResultContract.SQL_DELETE_ENTRIES, null);
+        cursor.moveToNext();
+        cursor.close();
     }
 
 }

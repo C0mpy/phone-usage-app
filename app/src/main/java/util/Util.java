@@ -10,6 +10,8 @@ public class Util {
     }
 
     public static long toMillis(Integer hours) {
-        return hours * 60 * 60 * 1000;
+
+        // return hours * 60 * 60 * 1000;
+        return 60 * 1000;
     }
 }

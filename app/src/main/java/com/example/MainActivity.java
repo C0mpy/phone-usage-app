@@ -13,9 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.HashMap;
-
+import dao.JSONDataAccess;
 import dao.database.DatabaseHelper;
 import dao.database.metadata.MetadataDbHelper;
 import dao.database.phone_usage.PhoneUsageDbHelper;
@@ -30,6 +28,8 @@ import phone_usage_app.sw63.phoneusageapp.R;
 import receiver.SurveyAlarm;
 import service.StartReceiversService;
 import util.Util;
+
+import java.util.HashMap;
 
 public class MainActivity extends Activity {
 
@@ -52,12 +52,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
-        context.deleteDatabase(DatabaseHelper.DATABASE_NAME);
+        JSONDataAccess.initPhoneUsage(context);
+//        context.deleteDatabase(DatabaseHelper.DATABASE_NAME);
         fetchDbHelpers();
         fetchDbData();
 
         questionLinearLayout = findViewById(R.id.questions_linear_layout);
         displaySurvey();
+        addListeners();
     }
 
     private void fetchDbHelpers() {
@@ -65,20 +67,11 @@ public class MainActivity extends Activity {
         surveyDbHelper = SurveyDbHelper.getInstance(context);
         phoneUsageDbHelper = PhoneUsageDbHelper.getInstance(context);
         surveyResultDbHelper = SurveyResultDbHelper.getInstance(context);
-//        databaseHelper = DatabaseHelper.getInstance(context);
     }
 
     private void fetchDbData() {
-//        databaseHelper.beginTransaction();
         metadata = metadataDbHelper.findOne();
         survey = surveyDbHelper.findOne();
-//        databaseHelper.endTransaction();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        addListeners();
     }
 
     private void addListeners() {
@@ -86,12 +79,12 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 SurveyResult surveyResult = createSurveyResult(survey);
-                saveSurveyResultAndUpdateMetadata(surveyResult, context);
+                saveSurveyResultAndUpdateMetadata(surveyResult);
 
-                Toast.makeText(context,
-                        "Thanks for taking the survey! Next survey expected in: "
-                                + metadata.getTimeToNextSurveyInHours() / 24 + " days!",
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(
+                      context,
+                      "Thanks for taking the survey! Next survey expected in: " + metadata.getTimeToNextSurveyInHours() / 24 + " days!",
+                      Toast.LENGTH_LONG).show();
 
                 registerReceivers();
             }
@@ -99,14 +92,13 @@ public class MainActivity extends Activity {
     }
 
     private void displaySurvey() {
-
-        TextView surveyTitle = (TextView)findViewById(R.id.surveyTitle);
+        TextView surveyTitle = (TextView) findViewById(R.id.surveyTitle);
         surveyTitle.setText(survey.getTitle());
 
-        TextView surveyDescription = (TextView)findViewById(R.id.surveyDescription);
+        TextView surveyDescription = (TextView) findViewById(R.id.surveyDescription);
         surveyDescription.setText(survey.getDescription());
 
-        for(Question q : survey.getQuestions()) {
+        for (Question q : survey.getQuestions()) {
 
             TextView textView = new TextView(context);
             textView.setId(("textView" + q.getContent()).hashCode());
@@ -121,7 +113,7 @@ public class MainActivity extends Activity {
             questionSeekbar.put(textView.getId(), seekBar);
 
             LinearLayout linearLayout = new LinearLayout(context);
-            linearLayout.setPadding(10, 0, 10 ,50);
+            linearLayout.setPadding(10, 0, 10, 50);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             linearLayout.setGravity(Gravity.CENTER);
             linearLayout.addView(textView);
@@ -135,10 +127,8 @@ public class MainActivity extends Activity {
         finishButton.setText("FINISH");
         finishButton.setTextSize(Util.convertToDp(15, context));
 
-        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT,
-                ConstraintLayout.LayoutParams.MATCH_PARENT
-        );
+        ConstraintLayout.LayoutParams params =
+              new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT);
         params.setMargins(0, 0, 0, 50);
         finishButton.setLayoutParams(params);
 
@@ -149,7 +139,7 @@ public class MainActivity extends Activity {
         SurveyResult surveyResult = new SurveyResult();
         surveyResult.setSurveyId(survey.getForeignId());
 
-        for(Question q : survey.getQuestions()) {
+        for (Question q : survey.getQuestions()) {
             SeekBar seekBar = questionSeekbar.get(("textView" + q.getContent()).hashCode());
 
             QuestionResponse questionResponse = new QuestionResponse();
@@ -160,25 +150,19 @@ public class MainActivity extends Activity {
         return surveyResult;
     }
 
-    private void saveSurveyResultAndUpdateMetadata(SurveyResult surveyResult, Context context) {
-//        databaseHelper.beginTransaction();
-
+    private void saveSurveyResultAndUpdateMetadata(SurveyResult surveyResult) {
         surveyResultDbHelper.save(surveyResult);
 
         metadata.setSurveyFetchedFromServer(false);
         metadata.setSurveyResultsSentToServer(false);
         metadata.setLastSurveyTakenTime(System.currentTimeMillis());
         metadataDbHelper.save(metadata);
-
-//        databaseHelper.endTransaction();
     }
 
     private void registerReceivers() {
-        Intent startIntent = new Intent(context, StartReceiversService.class);
-        startService(startIntent);
+        startService(new Intent(context, StartReceiversService.class));
         SurveyAlarm.start(context);
         finish();
     }
-
 
 }

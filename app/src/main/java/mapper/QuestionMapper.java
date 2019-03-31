@@ -6,6 +6,9 @@ import dao.database.question.QuestionContract;
 import dto.QuestionDTO;
 import model.Question;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class QuestionMapper {
 
     public static Question mapToModel(QuestionDTO dto) {
@@ -13,6 +16,14 @@ public class QuestionMapper {
         model.setForeignId(dto.getId());
         model.setContent(dto.getContent());
         return model;
+    }
+
+    public static List<Question> mapToModelList(List<QuestionDTO> dtos) {
+        List<Question> questionArrayList = new ArrayList<>();
+        for(QuestionDTO dto : dtos) {
+            questionArrayList.add(mapToModel(dto));
+        }
+        return questionArrayList;
     }
 
     public static QuestionDTO mapToDto(Question model) {

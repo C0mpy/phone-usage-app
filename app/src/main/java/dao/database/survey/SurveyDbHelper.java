@@ -28,6 +28,7 @@ public class SurveyDbHelper {
         databaseHelper = DatabaseHelper.getInstance(context);
         db = databaseHelper.getWritableDatabase();
         questionDbHelper = QuestionDbHelper.getInstance(context);
+        db.enableWriteAheadLogging();
     }
 
     public static synchronized SurveyDbHelper getInstance(Context context) {
