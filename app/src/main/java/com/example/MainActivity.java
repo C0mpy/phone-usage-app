@@ -13,8 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.HashMap;
+
 import dao.JSONDataAccess;
-import dao.database.DatabaseHelper;
 import dao.database.metadata.MetadataDbHelper;
 import dao.database.phone_usage.PhoneUsageDbHelper;
 import dao.database.survey.SurveyDbHelper;
@@ -28,8 +30,6 @@ import phone_usage_app.sw63.phoneusageapp.R;
 import receiver.SurveyAlarm;
 import service.StartReceiversService;
 import util.Util;
-
-import java.util.HashMap;
 
 public class MainActivity extends Activity {
 
