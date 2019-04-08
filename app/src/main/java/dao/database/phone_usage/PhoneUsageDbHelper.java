@@ -3,6 +3,10 @@ package dao.database.phone_usage;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import dao.database.DatabaseHelper;
 import mapper.PhoneUsageMapper;
 import model.PhoneUsage;
@@ -36,14 +40,17 @@ public class PhoneUsageDbHelper {
         cursor.close();
     }
 
-    public String sumPhoneUsage() {
-        String sum = "";
-        Cursor cursor = db.rawQuery(PhoneUsageContract.SQL_SUM_PHONE_USAGE, null);
+    public List<PhoneUsage> getPhoneUsage() {
+        List<PhoneUsage> result = new ArrayList<>();
+        Cursor cursor = db.rawQuery(PhoneUsageContract.SQL_GET_PHONE_USAGE, null);
         if (cursor.moveToFirst()) {
-            sum = cursor.getString(0);
+            while (!cursor.isAfterLast()) {
+                result.add(PhoneUsageMapper.mapToModel(cursor));
+                cursor.moveToNext();
+            }
         }
         cursor.close();
-        return sum;
+        return result;
     }
 
 }

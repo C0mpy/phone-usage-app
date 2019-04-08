@@ -29,6 +29,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 
 public class NetworkStateReceiver extends BroadcastReceiver {
 
@@ -124,11 +125,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     }
 
     private void sendUserResult(String surveyResultId, Metadata metadata) {
-        String phoneUsage = phoneUsageDbHelper.sumPhoneUsage();
-        if (phoneUsage == null) {
-            phoneUsage = "0";
-        }
-
+        List<PhoneUsage> phoneUsage = phoneUsageDbHelper.getPhoneUsage();
         UserResultDTO userResultDTO = UserResultMapper.mapToDto(surveyResultId, metadata, phoneUsage);
         String userResultJsonString = gson.toJson(userResultDTO);
 

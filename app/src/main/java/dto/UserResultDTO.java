@@ -1,18 +1,20 @@
 package dto;
 
+import java.util.List;
+
 public class UserResultDTO {
 
     private String survey_result_id;
     private String user_uuid;
-    private String time_spent_on_phone;
+    private List<PhoneUsageDTO> phone_usage;
     private String period_start;
     private String period_end;
 
     public UserResultDTO(
-          String survey_result_id, String user_uuid, String time_spent_on_phone, String period_start, String period_end) {
+            String survey_result_id, String user_uuid, List<PhoneUsageDTO> phone_usage, String period_start, String period_end) {
         this.survey_result_id = survey_result_id;
         this.user_uuid = user_uuid;
-        this.time_spent_on_phone = time_spent_on_phone;
+        this.phone_usage = phone_usage;
         this.period_start = period_start;
         this.period_end = period_end;
     }
@@ -33,12 +35,12 @@ public class UserResultDTO {
         this.user_uuid = user_uuid;
     }
 
-    public String getTime_spent_on_phone() {
-        return time_spent_on_phone;
+    public List<PhoneUsageDTO> getPhone_usage() {
+        return phone_usage;
     }
 
-    public void setTime_spent_on_phone(String time_spent_on_phone) {
-        this.time_spent_on_phone = time_spent_on_phone;
+    public void setPhone_usage(List<PhoneUsageDTO> phone_usage) {
+        this.phone_usage = phone_usage;
     }
 
     public String getPeriod_start() {

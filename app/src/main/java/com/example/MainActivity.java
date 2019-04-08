@@ -17,6 +17,7 @@ import android.widget.Toast;
 import java.util.HashMap;
 
 import dao.JSONDataAccess;
+import dao.database.DatabaseHelper;
 import dao.database.metadata.MetadataDbHelper;
 import dao.database.phone_usage.PhoneUsageDbHelper;
 import dao.database.survey.SurveyDbHelper;

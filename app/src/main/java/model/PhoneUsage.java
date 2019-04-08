@@ -5,6 +5,11 @@ public class PhoneUsage {
     private long startTime;
     private long endTime;
 
+    public PhoneUsage(long startTime, long endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     public long getStartTime() {
         return startTime;
     }
