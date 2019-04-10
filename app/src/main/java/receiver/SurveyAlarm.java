@@ -5,11 +5,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
 import com.example.MainActivity;
-
 import dao.database.metadata.MetadataDbHelper;
-import util.Util;
 
 public class SurveyAlarm  {
 

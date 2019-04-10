@@ -19,7 +19,6 @@ public class QuestionResponseContract {
 
         public static final String TABLE_NAME = "question_response";
 
-        public static final String COLUMN_FOREIGN_ID = "foreign_id";
         public static final String COLUMN_QUESTION_ID = "question_id";
         public static final String COLUMN_SURVEY_RESULT_ID = "survey_result_id";
         public static final String COLUMN_RESPONSE = "response";

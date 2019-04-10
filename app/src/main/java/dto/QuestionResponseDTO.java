@@ -3,14 +3,14 @@ package dto;
 public class QuestionResponseDTO {
 
     private String id;
-    private QuestionDTO question;
+    private String question_id;
     private String response;
 
     public QuestionResponseDTO() {}
 
-    public QuestionResponseDTO(String id, QuestionDTO question, String response) {
+    public QuestionResponseDTO(String id, String questionId, String response) {
         this.id = id;
-        this.question = question;
+        this.question_id = questionId;
         this.response = response;
     }
 
@@ -22,12 +22,12 @@ public class QuestionResponseDTO {
         this.id = id;
     }
 
-    public QuestionDTO getQuestion() {
-        return question;
+    public String getQuestion_id() {
+        return question_id;
     }
 
-    public void setQuestion(QuestionDTO question) {
-        this.question = question;
+    public void setQuestion_id(String questionId) {
+        this.question_id = questionId;
     }
 
     public String getResponse() {

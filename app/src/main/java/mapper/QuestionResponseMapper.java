@@ -21,7 +21,7 @@ public class QuestionResponseMapper {
     private static QuestionResponse map(QuestionResponseDTO dto) {
         QuestionResponse model = new QuestionResponse();
         model.setResponse(dto.getResponse());
-        model.setQuestion(QuestionMapper.mapToModel(dto.getQuestion()));
+        model.setQuestionId(dto.getQuestion_id());
         return model;
     }
 
@@ -36,14 +36,14 @@ public class QuestionResponseMapper {
     private static QuestionResponseDTO map(QuestionResponse model) {
         QuestionResponseDTO dto = new QuestionResponseDTO();
         dto.setResponse(model.getResponse());
-        dto.setQuestion(QuestionMapper.mapToDto(model.getQuestion()));
+        dto.setQuestion_id(model.getQuestionId());
         return dto;
     }
 
     public static ContentValues mapToContentValues(QuestionResponse questionResponse, String surveyResultId) {
         ContentValues values = new ContentValues();
         values.put(QuestionResponseContract.QuestionResponseEntry.COLUMN_RESPONSE, questionResponse.getResponse());
-        values.put(QuestionResponseContract.QuestionResponseEntry.COLUMN_QUESTION_ID, questionResponse.getQuestion().getForeignId());
+        values.put(QuestionResponseContract.QuestionResponseEntry.COLUMN_QUESTION_ID, questionResponse.getQuestionId());
         values.put(QuestionResponseContract.QuestionResponseEntry.COLUMN_SURVEY_RESULT_ID, surveyResultId);
         return values;
     }

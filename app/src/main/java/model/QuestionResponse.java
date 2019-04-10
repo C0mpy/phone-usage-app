@@ -3,19 +3,19 @@ package model;
 public class QuestionResponse {
 
     private String foreignId;
-    private Question question;
+    private String questionId;
     private String response;
 
     public QuestionResponse() {}
 
-    public QuestionResponse(Question question, String response) {
-        this.question = question;
+    public QuestionResponse(String questionId, String response) {
+        this.questionId = questionId;
         this.response = response;
     }
 
-    public QuestionResponse(String foreignId, Question question, String response) {
+    public QuestionResponse(String foreignId, String questionId, String response) {
         this.foreignId = foreignId;
-        this.question = question;
+        this.questionId = questionId;
         this.response = response;
     }
 
@@ -27,12 +27,12 @@ public class QuestionResponse {
         this.foreignId = foreignId;
     }
 
-    public Question getQuestion() {
-        return question;
+    public String getQuestionId() {
+        return questionId;
     }
 
-    public void setQuestion(Question question) {
-        this.question = question;
+    public void setQuestionId(String question) {
+        this.questionId = question;
     }
 
     public String getResponse() {

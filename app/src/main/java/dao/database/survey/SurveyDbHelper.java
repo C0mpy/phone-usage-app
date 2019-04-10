@@ -57,10 +57,8 @@ public class SurveyDbHelper {
             Log.w("SurveyDbHelper.init", "There is no Survey Entity in DB");
         } else if (count > 1) {
             Log.w("SurveyDbHelper.init", "There is more than one Survey Entity in DB");
-        } else {
-            return findAll().get(0);
         }
-        return null;
+        return findAll().get(0);
     }
 
     private Integer count() {

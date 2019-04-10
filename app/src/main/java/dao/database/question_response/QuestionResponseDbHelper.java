@@ -56,9 +56,7 @@ public class QuestionResponseDbHelper {
                 String response = cursor.getString(cursor.getColumnIndexOrThrow(QuestionResponseContract.QuestionResponseEntry.COLUMN_RESPONSE));
                 String questionId = cursor.getString(cursor.getColumnIndexOrThrow(QuestionResponseContract.QuestionResponseEntry.COLUMN_QUESTION_ID));
 
-                Question question = questionDbHelper.find(questionId);
-
-                result.add(new QuestionResponse(question, response));
+                result.add(new QuestionResponse(questionId, response));
                 cursor.moveToNext();
             }
             cursor.close();

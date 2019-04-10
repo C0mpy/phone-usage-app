@@ -13,9 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.HashMap;
-
 import dao.JSONDataAccess;
 import dao.database.DatabaseHelper;
 import dao.database.metadata.MetadataDbHelper;
@@ -31,6 +28,8 @@ import phone_usage_app.sw63.phoneusageapp.R;
 import receiver.SurveyAlarm;
 import service.StartReceiversService;
 import util.Util;
+
+import java.util.HashMap;
 
 public class MainActivity extends Activity {
 
@@ -144,7 +143,7 @@ public class MainActivity extends Activity {
             SeekBar seekBar = questionSeekbar.get(("textView" + q.getContent()).hashCode());
 
             QuestionResponse questionResponse = new QuestionResponse();
-            questionResponse.setQuestion(q);
+            questionResponse.setQuestionId(q.getForeignId());
             questionResponse.setResponse(Integer.toString(seekBar.getProgress()));
             surveyResult.getQuestionResponses().add(questionResponse);
         }
