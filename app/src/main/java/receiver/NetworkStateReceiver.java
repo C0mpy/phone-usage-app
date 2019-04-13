@@ -42,6 +42,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     private Gson gson;
 
     public static final String SERVER_PATH = "https://phone-usage-server.herokuapp.com/";
+//    public static final String SERVER_PATH = "http://10.0.2.2:3000/";
 
     public NetworkStateReceiver(Context context) {
         this.context = context;

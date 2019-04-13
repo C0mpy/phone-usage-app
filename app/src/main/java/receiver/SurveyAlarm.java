@@ -25,10 +25,12 @@ public class SurveyAlarm  {
             Integer hoursToNextSurvey = metadataDbHelper.findOne().getTimeToNextSurveyInHours();
 
             alarmManager = (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
+
+            // every 6 hours ask for input
             alarmManager.setRepeating(
                     AlarmManager.RTC_WAKEUP,
-                    currentTimeInMillis + 120000,
-                    120000,
+                    currentTimeInMillis + 60000 * 60 * 6,
+                    60000 * 60 * 6,
                     pendingIntent);
         } else {
             Log.d("AlarmManager", "Alarm is already active!");
