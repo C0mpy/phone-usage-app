@@ -13,7 +13,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="com.example.MainActivity">
+        <activity android:name="com.example.MainActivity" android:label="Phone Usage Tracker" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

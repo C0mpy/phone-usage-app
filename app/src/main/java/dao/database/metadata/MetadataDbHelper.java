@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import dao.database.DatabaseHelper;
 import mapper.MetadataMapper;
@@ -61,12 +62,14 @@ public class MetadataDbHelper {
         List<Metadata> metadataList = findAll();
         if (metadataList.size() == 0) {
             Log.w("SurveyDbHelper.init", "There is no Metadata Entity in DB");
+            return save(new Metadata(UUID.randomUUID().toString(), System.currentTimeMillis(),
+                                     false, false, 6));
         } else if (metadataList.size() > 1) {
             Log.w("SurveyDbHelper.init", "There is more than one Metadata Entity in DB");
-        } else {
-            return metadataList.get(0);
+            return save(metadataList.get(0));
         }
-        return null;
+
+        return metadataList.get(0);
     }
 
     private List<Metadata> findAll() {

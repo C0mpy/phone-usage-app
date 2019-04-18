@@ -14,7 +14,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import dao.JSONDataAccess;
-import dao.database.DatabaseHelper;
 import dao.database.metadata.MetadataDbHelper;
 import dao.database.phone_usage.PhoneUsageDbHelper;
 import dao.database.survey.SurveyDbHelper;
@@ -83,7 +82,7 @@ public class MainActivity extends Activity {
 
                 Toast.makeText(
                       context,
-                      "Thanks for taking the survey! Next survey expected in: " + metadata.getTimeToNextSurveyInHours() / 24 + " days!",
+                      "Thanks for taking the survey! Next survey expected in: " + metadata.getTimeToNextSurveyInHours() + " hours!",
                       Toast.LENGTH_LONG).show();
 
                 registerReceivers();
@@ -156,6 +155,8 @@ public class MainActivity extends Activity {
         metadata.setSurveyFetchedFromServer(false);
         metadata.setSurveyResultsSentToServer(false);
         metadata.setLastSurveyTakenTime(System.currentTimeMillis());
+        // 6 hours to next survey
+        metadata.setTimeToNextSurveyInHours(6);
         metadataDbHelper.save(metadata);
     }
 
