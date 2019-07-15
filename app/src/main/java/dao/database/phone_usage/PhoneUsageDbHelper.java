@@ -9,7 +9,7 @@ import java.util.List;
 
 import dao.database.DatabaseHelper;
 import mapper.PhoneUsageMapper;
-import model.PhoneUsage;
+import model.Interval;
 
 public class PhoneUsageDbHelper {
 
@@ -30,8 +30,8 @@ public class PhoneUsageDbHelper {
         return sInstance;
     }
 
-    public void save(PhoneUsage phoneUsage) {
-        db.insert(PhoneUsageContract.PhoneUsageEntry.TABLE_NAME, null, PhoneUsageMapper.toContentValues(phoneUsage));
+    public void save(Interval interval) {
+        db.insert(PhoneUsageContract.PhoneUsageEntry.TABLE_NAME, null, PhoneUsageMapper.toContentValues(interval));
     }
 
     public void removeAll() {
@@ -40,8 +40,8 @@ public class PhoneUsageDbHelper {
         cursor.close();
     }
 
-    public List<PhoneUsage> getPhoneUsage() {
-        List<PhoneUsage> result = new ArrayList<>();
+    public List<Interval> getPhoneUsage() {
+        List<Interval> result = new ArrayList<>();
         Cursor cursor = db.rawQuery(PhoneUsageContract.SQL_GET_PHONE_USAGE, null);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {

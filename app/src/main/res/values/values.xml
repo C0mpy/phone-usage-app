@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PhoneUsageApp</string>
+    <integer name="fetchSurveyTimeInMinutes">15</integer>
+</resources>

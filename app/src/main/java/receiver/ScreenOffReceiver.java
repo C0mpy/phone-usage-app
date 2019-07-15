@@ -7,7 +7,7 @@ import android.util.Log;
 import dao.JSONDataAccess;
 import dao.database.DatabaseHelper;
 import dao.database.phone_usage.PhoneUsageDbHelper;
-import model.PhoneUsage;
+import model.Interval;
 
 public class ScreenOffReceiver extends BroadcastReceiver {
 
@@ -21,20 +21,20 @@ public class ScreenOffReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        PhoneUsage phoneUsageData = JSONDataAccess.readCurrentPhoneUsageData(context);
-        if(phoneUsageData == null || phoneUsageData.getStartTime() == 0) {
-            phoneUsageData = new PhoneUsage();
-            phoneUsageData.setStartTime(System.currentTimeMillis());
+        Interval intervalData = JSONDataAccess.readCurrentPhoneUsageData(context);
+        if(intervalData == null || intervalData.getStartTime() == 0) {
+            intervalData = new Interval();
+            intervalData.setStartTime(System.currentTimeMillis());
         }
-        phoneUsageData.setEndTime(System.currentTimeMillis());
-        JSONDataAccess.writeCurrentPhoneUsageData(phoneUsageData, context);
+        intervalData.setEndTime(System.currentTimeMillis());
+        JSONDataAccess.writeCurrentPhoneUsageData(intervalData, context);
 
         new Thread(new Runnable() {
             public void run() {
-                PhoneUsage phoneUsage = JSONDataAccess.readCurrentPhoneUsageData(context);
+                Interval interval = JSONDataAccess.readCurrentPhoneUsageData(context);
 
                 databaseHelper.beginTransaction();
-                phoneUsageDbHelper.save(phoneUsage);
+                phoneUsageDbHelper.save(interval);
                 databaseHelper.endTransaction();
             }
         }).start();

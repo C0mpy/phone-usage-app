@@ -44,6 +44,13 @@ public class SurveyDbHelper {
         return survey;
     }
 
+    public List<Survey> save(List<Survey> surveys) {
+        for (Survey survey: surveys) {
+            save(survey);
+        }
+        return surveys;
+    }
+
     public void removeAll() {
         questionDbHelper.removeAll();
         Cursor cursor = db.rawQuery(SurveyContract.SQL_DELETE_ENTRIES, null);
@@ -71,7 +78,7 @@ public class SurveyDbHelper {
         return result;
     }
 
-    private List<Survey> findAll() {
+    public List<Survey> findAll() {
         List<Survey> result = new ArrayList<>();
         Cursor cursor = db.rawQuery(SurveyContract.FIND, null);
         if (cursor.moveToFirst()) {

@@ -5,24 +5,33 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.google.gson.Gson;
-import model.PhoneUsage;
+import model.Interval;
+import model.Survey;
 
 public class JSONDataAccess {
 
     private static Gson gson = new Gson();
 
     public static void initPhoneUsage(Context context) {
-        PhoneUsage phoneUsage = new PhoneUsage();
-        phoneUsage.setStartTime(System.currentTimeMillis());
-        writeCurrentPhoneUsageData(phoneUsage, context);
+        Interval interval = new Interval();
+        interval.setStartTime(System.currentTimeMillis());
+        writeCurrentPhoneUsageData(interval, context);
     }
 
-    public static void writeCurrentPhoneUsageData(PhoneUsage phoneUsageData, Context context) {
-        writeJsonObject("phoneUsage", phoneUsageData, context);
+    public static void writeCurrentPhoneUsageData(Interval intervalData, Context context) {
+        writeJsonObject("phoneUsage", intervalData, context);
     }
 
-    public static PhoneUsage readCurrentPhoneUsageData(Context context) {
-        return gson.fromJson(getJsonString("phoneUsage", context), PhoneUsage.class);
+    public static Interval readCurrentPhoneUsageData(Context context) {
+        return gson.fromJson(getJsonString("phoneUsage", context), Interval.class);
+    }
+
+    public static void writeActiveSurvey(Survey survey, Context context) {
+        writeJsonObject("activeSurvey", survey, context);
+    }
+
+    public static Survey readActiveSurvey(Context context) {
+        return gson.fromJson(getJsonString("activeSurvey", context), Survey.class);
     }
 
     private static String getJsonString(String dataName, Context context) {

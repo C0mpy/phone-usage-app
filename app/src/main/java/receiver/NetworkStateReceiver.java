@@ -7,28 +7,21 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 import com.google.gson.Gson;
-import dao.JSONDataAccess;
+import com.google.gson.reflect.TypeToken;
 import dao.database.DatabaseHelper;
 import dao.database.metadata.MetadataDbHelper;
 import dao.database.phone_usage.PhoneUsageDbHelper;
 import dao.database.survey.SurveyDbHelper;
 import dao.database.survey_result.SurveyResultDbHelper;
 import dto.SurveyDTO;
-import dto.UserResultDTO;
 import mapper.SurveyMapper;
-import mapper.SurveyResultMapper;
-import mapper.UserResultMapper;
-import model.Metadata;
-import model.PhoneUsage;
 import model.Survey;
-import model.SurveyResult;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 
 public class NetworkStateReceiver extends BroadcastReceiver {
@@ -57,14 +50,11 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         if (hasInternetConnection()) {
-            Metadata metadata = metadataDbHelper.findOne();
-            if (!metadata.getSurveyFetchedFromServer()) {
-                fetchSurveyFromServer();
-            }
+            fetchActiveSurveysFromServer();
 
-            if (!metadata.getSurveyResultsSentToServer()) {
-                sendResultsToServer();
-            }
+//            if (!metadata.getSurveyResultsSentToServer()) {
+//                sendResultsToServer();
+//            }
         }
     }
 
@@ -84,60 +74,55 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         }
     }
 
-    private void fetchSurveyFromServer() {
+    private void fetchActiveSurveysFromServer() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Metadata metadata = metadataDbHelper.findOne();
-                Survey activeSurvey = getActiveSurvey();
-                if (activeSurvey != null) {
-                    surveyDbHelper.removeAll();
-                    surveyDbHelper.save(activeSurvey);
-                    metadata.setSurveyFetchedFromServer(true);
-                    metadataDbHelper.save(metadata);
-                }
+                List<Survey> activeSurveys = getActiveSurveys();
+                surveyDbHelper.removeAll();
+                surveyDbHelper.save(activeSurveys);
             }
         }).start();
     }
 
-    private Survey getActiveSurvey() {
-        StringBuffer content = sendRequestToServer("active-survey", null);
-        SurveyDTO dto = gson.fromJson(content.toString(), SurveyDTO.class);
-        return SurveyMapper.toModel(dto);
+    private List<Survey> getActiveSurveys() {
+        StringBuffer content = sendRequestToServer("active-surveys", null);
+        List<SurveyDTO> surveyDTOS = gson.fromJson(content.toString(), new TypeToken<List<SurveyDTO>>(){}.getType());
+        return SurveyMapper.toModelList(surveyDTOS);
     }
-
-    private void sendResultsToServer() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Metadata metadata = metadataDbHelper.findOne();
-                SurveyResult surveyResult = surveyResultDbHelper.findOne();
-                String surveyResultId = sendSurveyResult(surveyResult);
-                sendUserResult(surveyResultId, metadata);
-                surveyResultDbHelper.removeAll();
-                metadata.setSurveyResultsSentToServer(true);
-                metadataDbHelper.save(metadata);
-            }
-        }).start();
-    }
-
-    private String sendSurveyResult(SurveyResult surveyResult) {
-        String surveyResultJsonString = gson.toJson(SurveyResultMapper.mapToDTO(surveyResult));
-        StringBuffer content = sendRequestToServer("survey_results", surveyResultJsonString);
-        HashMap<String, Object> resultMap = gson.fromJson(content.toString(), HashMap.class);
-        return String.valueOf(resultMap.get("survey_result_id"));
-
-    }
-
-    private void sendUserResult(String surveyResultId, Metadata metadata) {
-        List<PhoneUsage> phoneUsage = phoneUsageDbHelper.getPhoneUsage();
-        UserResultDTO userResultDTO = UserResultMapper.mapToDto(surveyResultId, metadata, phoneUsage);
-        String userResultJsonString = gson.toJson(userResultDTO);
-
-        sendRequestToServer("user_results", userResultJsonString);
-        phoneUsageDbHelper.removeAll();
-
-    }
+//
+//    private void sendResultsToServer() {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Metadata metadata = metadataDbHelper.findOne();
+//                SurveyResult surveyResult = surveyResultDbHelper.findOne();
+//                String surveyResultId = sendSurveyResult(surveyResult);
+//                sendUserResult(surveyResultId, metadata);
+//                surveyResultDbHelper.removeAll();
+//                metadata.setSurveyResultsSentToServer(true);
+//                metadataDbHelper.save(metadata);
+//            }
+//        }).start();
+//    }
+//
+//    private String sendSurveyResult(SurveyResult surveyResult) {
+//        String surveyResultJsonString = gson.toJson(SurveyResultMapper.mapToDTO(surveyResult));
+//        StringBuffer content = sendRequestToServer("survey_results", surveyResultJsonString);
+//        HashMap<String, Object> resultMap = gson.fromJson(content.toString(), HashMap.class);
+//        return String.valueOf(resultMap.get("survey_result_id"));
+//
+//    }
+//
+//    private void sendUserResult(String surveyResultId, Metadata metadata) {
+//        List<Interval> phoneUsage = phoneUsageDbHelper.getPhoneUsage();
+//        UserResultDTO userResultDTO = UserResultMapper.mapToDto(surveyResultId, metadata, phoneUsage);
+//        String userResultJsonString = gson.toJson(userResultDTO);
+//
+//        sendRequestToServer("user_results", userResultJsonString);
+//        phoneUsageDbHelper.removeAll();
+//
+//    }
 
     private StringBuffer sendRequestToServer(String httpPath, String jsonData) {
         try {

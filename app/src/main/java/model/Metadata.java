@@ -3,17 +3,15 @@ package model;
 public class Metadata {
 
     private String uuid;
-    private Long lastSurveyTakenTime;
-    private Boolean surveyFetchedFromServer;
+    private Boolean experimentIsRunning;
+    private Long experimentEndTime;
     private Boolean surveyResultsSentToServer;
-    private Integer timeToNextSurveyInHours;
 
-    public Metadata(String uuid, Long lastSurveyTakenTime, Boolean surveyFetchedFromServer, Boolean surveyResultsSentToServer, Integer timeToNextSurveyInHours) {
+    public Metadata(String uuid, Boolean experimentIsRunning, Long experimentEndTime, Boolean surveyResultsSentToServer) {
         this.uuid = uuid;
-        this.lastSurveyTakenTime = lastSurveyTakenTime;
-        this.surveyFetchedFromServer = surveyFetchedFromServer;
+        this.experimentIsRunning = experimentIsRunning;
+        this.experimentEndTime = experimentEndTime;
         this.surveyResultsSentToServer = surveyResultsSentToServer;
-        this.timeToNextSurveyInHours = timeToNextSurveyInHours;
     }
 
     public String getUuid() {
@@ -24,28 +22,20 @@ public class Metadata {
         this.uuid = uuid;
     }
 
-    public Long getLastSurveyTakenTime() {
-        return lastSurveyTakenTime;
+    public Boolean getExperimentIsRunning() {
+        return experimentIsRunning;
     }
 
-    public void setLastSurveyTakenTime(Long lastSurveyTakenTime) {
-        this.lastSurveyTakenTime = lastSurveyTakenTime;
+    public void setExperimentIsRunning(Boolean experimentIsRunning) {
+        this.experimentIsRunning = experimentIsRunning;
     }
 
-    public Boolean getSurveyFetchedFromServer() {
-        return surveyFetchedFromServer;
+    public Long getExperimentEndTime() {
+        return experimentEndTime;
     }
 
-    public void setSurveyFetchedFromServer(Boolean surveyFetchedFromServer) {
-        this.surveyFetchedFromServer = surveyFetchedFromServer;
-    }
-
-    public Integer getTimeToNextSurveyInHours() {
-        return timeToNextSurveyInHours;
-    }
-
-    public void setTimeToNextSurveyInHours(Integer timeToNextSurveyInHours) {
-        this.timeToNextSurveyInHours = timeToNextSurveyInHours;
+    public void setExperimentEndTime(Long experimentEndTime) {
+        this.experimentEndTime = experimentEndTime;
     }
 
     public Boolean getSurveyResultsSentToServer() {

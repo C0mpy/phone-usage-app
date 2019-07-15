@@ -15,7 +15,6 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Intent startIntent = new Intent(context, StartReceiversService.class);
         context.startService(startIntent);
-        SurveyAlarm.start(context);
     }
 
 }

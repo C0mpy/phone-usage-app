@@ -13,4 +13,8 @@ public class Util {
         return hours * 60 * 60 * 1000;
     }
 
+    public static long minutesToMillis(int minutes) {
+        return minutes * 60 * 1000;
+    }
+
 }

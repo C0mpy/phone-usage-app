@@ -10,28 +10,25 @@ public class MetadataMapper {
 
     public static final Metadata toMetadata(Cursor cursor) {
         String uuid = cursor.getString(cursor.getColumnIndexOrThrow(MetadataContract.MetadataEntry.COLUMN_UUID));
-        Long lastSurveyTakenTime =
-              cursor.getLong(cursor.getColumnIndexOrThrow(MetadataContract.MetadataEntry.COLUMN_LAST_SURVEY_TAKEN_TIME));
-        Boolean surveyFetchedFromServer =
-              cursor.getInt(cursor.getColumnIndexOrThrow(MetadataContract.MetadataEntry.COLUMN_SURVEY_FETCHED_FROM_SERVER)) == 1
+        Boolean experimentIsRunning =
+              cursor.getInt(cursor.getColumnIndexOrThrow(MetadataContract.MetadataEntry.COLUMN_EXPERIMENT_IS_RUNNING)) == 1
                     ? true
                     : false;
+        Long experimentEndTime =
+              cursor.getLong(cursor.getColumnIndexOrThrow(MetadataContract.MetadataEntry.COLUMN_EXPERIMENT_END_TIME));
         Boolean surveyResultsSentToServer =
               cursor.getInt(cursor.getColumnIndexOrThrow(MetadataContract.MetadataEntry.COLUMN_SURVEY_RESULTS_SENT_TO_SERVER)) == 1
                     ? true
                     : false;
-        Integer timeToNextSurveyInHours =
-              cursor.getInt(cursor.getColumnIndexOrThrow(MetadataContract.MetadataEntry.COLUMN_TIME_TO_NEXT_SURVEY_IN_HOURS));
-        return new Metadata(uuid, lastSurveyTakenTime, surveyFetchedFromServer, surveyResultsSentToServer, timeToNextSurveyInHours);
+        return new Metadata(uuid, experimentIsRunning, experimentEndTime, surveyResultsSentToServer);
     }
 
     public static ContentValues toContentValues(Metadata metadata) {
         ContentValues values = new ContentValues();
         values.put(MetadataContract.MetadataEntry.COLUMN_UUID, metadata.getUuid());
-        values.put(MetadataContract.MetadataEntry.COLUMN_LAST_SURVEY_TAKEN_TIME, metadata.getLastSurveyTakenTime());
-        values.put(MetadataContract.MetadataEntry.COLUMN_SURVEY_FETCHED_FROM_SERVER, metadata.getSurveyFetchedFromServer());
+        values.put(MetadataContract.MetadataEntry.COLUMN_EXPERIMENT_IS_RUNNING, metadata.getExperimentIsRunning());
+        values.put(MetadataContract.MetadataEntry.COLUMN_EXPERIMENT_END_TIME, metadata.getExperimentEndTime());
         values.put(MetadataContract.MetadataEntry.COLUMN_SURVEY_RESULTS_SENT_TO_SERVER, metadata.getSurveyResultsSentToServer());
-        values.put(MetadataContract.MetadataEntry.COLUMN_TIME_TO_NEXT_SURVEY_IN_HOURS, metadata.getTimeToNextSurveyInHours());
         return values;
     }
 }

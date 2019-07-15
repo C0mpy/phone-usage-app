@@ -48,10 +48,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues metadataCV = new ContentValues();
         metadataCV.put(MetadataContract.MetadataEntry.COLUMN_UUID, UUID.randomUUID().toString());
-        metadataCV.put(MetadataContract.MetadataEntry.COLUMN_LAST_SURVEY_TAKEN_TIME, System.currentTimeMillis());
-        metadataCV.put(MetadataContract.MetadataEntry.COLUMN_SURVEY_FETCHED_FROM_SERVER, false);
+        metadataCV.put(MetadataContract.MetadataEntry.COLUMN_EXPERIMENT_IS_RUNNING, false);
         metadataCV.put(MetadataContract.MetadataEntry.COLUMN_SURVEY_RESULTS_SENT_TO_SERVER, false);
-        metadataCV.put(MetadataContract.MetadataEntry.COLUMN_TIME_TO_NEXT_SURVEY_IN_HOURS, 24 * 7);
         db.insert(MetadataContract.MetadataEntry.TABLE_NAME, null, metadataCV);
 
 

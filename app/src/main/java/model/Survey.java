@@ -1,8 +1,9 @@
 package model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Survey {
+public class Survey implements Serializable {
 
     // SurveyId on server
     private String foreignId;

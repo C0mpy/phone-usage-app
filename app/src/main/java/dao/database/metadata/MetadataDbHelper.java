@@ -1,18 +1,16 @@
 package dao.database.metadata;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import dao.database.DatabaseHelper;
+import mapper.MetadataMapper;
+import model.Metadata;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import dao.database.DatabaseHelper;
-import mapper.MetadataMapper;
-import model.Metadata;
 
 public class MetadataDbHelper {
 
@@ -62,8 +60,7 @@ public class MetadataDbHelper {
         List<Metadata> metadataList = findAll();
         if (metadataList.size() == 0) {
             Log.w("SurveyDbHelper.init", "There is no Metadata Entity in DB");
-            return save(new Metadata(UUID.randomUUID().toString(), System.currentTimeMillis(),
-                                     false, false, 6));
+            return save(new Metadata(UUID.randomUUID().toString(), false, null, false));
         } else if (metadataList.size() > 1) {
             Log.w("SurveyDbHelper.init", "There is more than one Metadata Entity in DB");
             return save(metadataList.get(0));
