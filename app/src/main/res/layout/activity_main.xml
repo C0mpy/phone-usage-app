@@ -8,44 +8,4 @@
               android:background="@color/design_default_color_primary_dark"
               android:orientation="vertical"
               tools:context="com.example.MainActivity">
-
-    <TextView
-        android:id="@+id/surveyTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="2dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="2dp"
-        android:layout_marginBottom="3dp"
-        android:gravity="center"
-        android:textColor="@android:color/background_light"
-        android:textSize="25dp" />
-
-    <TextView
-        android:id="@+id/surveyDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="2dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="2dp"
-        android:layout_marginBottom="3dp"
-        android:gravity="center"
-        android:textColor="@android:color/background_light"
-        android:textSize="25dp" />
-
-    <ScrollView
-        android:id="@+id/questions_scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/questions_linear_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:orientation="vertical" />
-    </ScrollView>
-
 </LinearLayout>
