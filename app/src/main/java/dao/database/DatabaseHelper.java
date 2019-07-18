@@ -2,15 +2,16 @@ package dao.database;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import dao.database.metadata.MetadataContract;
-import dao.database.phone_usage.PhoneUsageContract;
+import dao.database.interval.IntervalContract;
 import dao.database.question.QuestionContract;
 import dao.database.question_response.QuestionResponseContract;
 import dao.database.survey.SurveyContract;
 import dao.database.survey_result.SurveyResultContract;
+import model.Survey;
+import util.Util;
 
 import java.util.UUID;
 
@@ -44,7 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(SurveyContract.CREATE_TABLE);
         db.execSQL(QuestionResponseContract.CREATE_TABLE);
         db.execSQL(SurveyResultContract.CREATE_TABLE);
-        db.execSQL(PhoneUsageContract.CREATE_TABLE);
+        db.execSQL(IntervalContract.CREATE_TABLE);
 
         ContentValues metadataCV = new ContentValues();
         metadataCV.put(MetadataContract.MetadataEntry.COLUMN_UUID, UUID.randomUUID().toString());
@@ -57,6 +58,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_FOREIGN_ID, "1");
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_TITLE, "This is the inital Survey deployed to mobile devices.");
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_DESCRIPTION, "Please answer questions on a scale 1 - 5");
+        surveyCV.put(SurveyContract.SurveyEntry.COLUMN_START_TIME, System.currentTimeMillis() - Util.daysToMilis(1));
         long surveyId = db.insert(SurveyContract.SurveyEntry.TABLE_NAME, null, surveyCV);
 
         ContentValues question1CV = new ContentValues();

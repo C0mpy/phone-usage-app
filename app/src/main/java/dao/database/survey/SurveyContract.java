@@ -9,7 +9,9 @@ public class SurveyContract {
                     BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                     SurveyEntry.COLUMN_FOREIGN_ID + " TEXT," +
                     SurveyEntry.COLUMN_TITLE + " TEXT," +
-                    SurveyEntry.COLUMN_DESCRIPTION + " TEXT)";
+                    SurveyEntry.COLUMN_DESCRIPTION + " TEXT," +
+                    SurveyEntry.COLUMN_START_TIME + " INTEGER, " +
+                    SurveyEntry.COLUMN_END_TIME + " INTEGER)";
 
     public static final String SQL_DELETE_ENTRIES =
             "DELETE FROM " + SurveyContract.SurveyEntry.TABLE_NAME;
@@ -28,5 +30,7 @@ public class SurveyContract {
         public static final String COLUMN_FOREIGN_ID = "foreign_id";
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_DESCRIPTION = "description";
+        public static final String COLUMN_START_TIME = "start_time";
+        public static final String COLUMN_END_TIME = "end_time";
     }
 }

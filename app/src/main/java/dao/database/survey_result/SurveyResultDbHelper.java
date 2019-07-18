@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.database.DatabaseHelper;
+import dao.database.interval.IntervalDbHelper;
 import dao.database.question.QuestionContract;
 import dao.database.question_response.QuestionResponseDbHelper;
+import model.Interval;
 import model.QuestionResponse;
 import model.Survey;
 import model.SurveyResult;
@@ -23,6 +25,7 @@ public class SurveyResultDbHelper {
     private static Context context;
     private static DatabaseHelper databaseHelper;
     private static QuestionResponseDbHelper questionResponseDbHelper;
+    private static IntervalDbHelper intervalDbHelper;
     private static SurveyResultDbHelper sInstance;
 
     private SurveyResultDbHelper(Context _context) {
@@ -31,6 +34,7 @@ public class SurveyResultDbHelper {
         db = databaseHelper.getWritableDatabase();
         db.enableWriteAheadLogging();
         questionResponseDbHelper = QuestionResponseDbHelper.getInstance(context);
+
     }
 
     public static synchronized SurveyResultDbHelper getInstance(Context context) {
@@ -81,10 +85,10 @@ public class SurveyResultDbHelper {
             while (!cursor.isAfterLast()) {
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(BaseColumns._ID));
                 String surveyId = cursor.getString(cursor.getColumnIndexOrThrow(SurveyResultContract.SurveyResultEntry.COLUMN_SURVEY_ID));
-
+                String uuid = cursor.getString(cursor.getColumnIndexOrThrow(SurveyResultContract.SurveyResultEntry.COLUMN_UUID));
                 List<QuestionResponse> questionResponses = questionResponseDbHelper.findWhereSurveyResultId(id);
-
-                result.add(new SurveyResult(id, surveyId, questionResponses));
+                List<Interval> intervals = intervalDbHelper.findWhereSurveyResultId(id);
+                result.add(new SurveyResult(id, surveyId, uuid, intervals, questionResponses));
                 cursor.moveToNext();
             }
         }

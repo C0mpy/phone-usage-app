@@ -6,17 +6,17 @@ import android.content.Intent;
 import android.util.Log;
 import dao.JSONDataAccess;
 import dao.database.DatabaseHelper;
-import dao.database.phone_usage.PhoneUsageDbHelper;
+import dao.database.interval.IntervalDbHelper;
 import model.Interval;
 
 public class ScreenOffReceiver extends BroadcastReceiver {
 
     private DatabaseHelper databaseHelper;
-    private PhoneUsageDbHelper phoneUsageDbHelper;
+    private IntervalDbHelper intervalDbHelper;
 
     public ScreenOffReceiver(Context context) {
         databaseHelper = DatabaseHelper.getInstance(context);
-        phoneUsageDbHelper = PhoneUsageDbHelper.getInstance(context);
+        intervalDbHelper = IntervalDbHelper.getInstance(context);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ScreenOffReceiver extends BroadcastReceiver {
                 Interval interval = JSONDataAccess.readCurrentPhoneUsageData(context);
 
                 databaseHelper.beginTransaction();
-                phoneUsageDbHelper.save(interval);
+                intervalDbHelper.save(interval);
                 databaseHelper.endTransaction();
             }
         }).start();

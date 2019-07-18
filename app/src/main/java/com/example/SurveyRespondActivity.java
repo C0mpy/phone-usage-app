@@ -7,16 +7,22 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+import dao.JSONDataAccess;
 import dao.database.metadata.MetadataDbHelper;
 import dao.database.survey_result.SurveyResultDbHelper;
 import model.Metadata;
 import model.Question;
+import model.QuestionResponse;
 import model.Survey;
+import model.SurveyResult;
 import phone_usage_app.sw63.phoneusageapp.R;
+import service.StartReceiversService;
 import util.Util;
 
 import java.util.HashMap;
@@ -28,7 +34,6 @@ public class SurveyRespondActivity extends Activity {
     LinearLayout questionLinearLayout;
     HashMap<Integer, SeekBar> questionSeekbar = new HashMap<>();
     Button finishButton;
-
 
     MetadataDbHelper metadataDbHelper;
     SurveyResultDbHelper surveyResultDbHelper;
@@ -49,7 +54,7 @@ public class SurveyRespondActivity extends Activity {
         fetchDbData();
 
         displaySurvey();
-//        addListeners();
+        addListeners();
     }
 
     private void fetchSurveyParameter() {
@@ -110,29 +115,53 @@ public class SurveyRespondActivity extends Activity {
         questionLinearLayout.addView(finishButton);
     }
 
-//    private SurveyResult createSurveyResult(Survey survey) {
-//        SurveyResult surveyResult = new SurveyResult();
-//        surveyResult.setSurveyId(survey.getForeignId());
-//
-//        for (Question q : survey.getQuestions()) {
-//            SeekBar seekBar = questionSeekbar.get(("textView" + q.getContent()).hashCode());
-//
-//            QuestionResponse questionResponse = new QuestionResponse();
-//            questionResponse.setQuestionId(q.getForeignId());
-//            questionResponse.setResponse(Integer.toString(seekBar.getProgress()));
-//            surveyResult.getQuestionResponses().add(questionResponse);
-//        }
-//        return surveyResult;
-//    }
-//
-//    private void saveSurveyResultAndUpdateMetadata(SurveyResult surveyResult) {
-//        surveyResultDbHelper.save(surveyResult);
-//
-//        metadata.setSurveyFetchedFromServer(false);
-//        metadata.setSurveyResultsSentToServer(false);
-//        metadata.setLastSurveyTakenTime(System.currentTimeMillis());
-//        // 6 hours to next survey
-//        metadata.setTimeToNextSurveyInHours(6);
-//        metadataDbHelper.save(metadata);
-//    }
+    private void addListeners() {
+        finishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                JSONDataAccess.writeActiveSurvey(survey, context);
+
+                SurveyResult surveyResult = createSurveyResult(survey);
+                saveSurveyResultAndUpdateMetadata(surveyResult);
+
+                Toast
+                      .makeText(context, "Thanks for taking the survey! Next survey expected at: " + metadata.getExperimentEndTime(),
+                                Toast.LENGTH_LONG)
+                      .show();
+
+                registerReceivers();
+            }
+
+        });
+    }
+
+    private SurveyResult createSurveyResult(Survey survey) {
+        SurveyResult surveyResult = new SurveyResult();
+        surveyResult.setSurveyId(survey.getForeignId());
+        surveyResult.setUuid(metadata.getUuid());
+
+        for (Question q : survey.getQuestions()) {
+            SeekBar seekBar = questionSeekbar.get(("textView" + q.getContent()).hashCode());
+
+            QuestionResponse questionResponse = new QuestionResponse();
+            questionResponse.setQuestionId(q.getForeignId());
+            questionResponse.setResponse(Integer.toString(seekBar.getProgress()));
+            surveyResult.getQuestionResponses().add(questionResponse);
+        }
+        return surveyResult;
+    }
+
+    private void saveSurveyResultAndUpdateMetadata(SurveyResult surveyResult) {
+        surveyResultDbHelper.save(surveyResult);
+
+        metadata.setExperimentIsRunning(true);
+        metadata.setExperimentEndTime(survey.getEndTime());
+        metadata.setSurveyResultsSentToServer(false);
+        metadataDbHelper.save(metadata);
+    }
+
+    private void registerReceivers() {
+        startService(new Intent(context, StartReceiversService.class));
+        finish();
+    }
 }

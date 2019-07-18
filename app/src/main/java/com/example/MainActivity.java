@@ -8,8 +8,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import dao.JSONDataAccess;
+import dao.database.DatabaseHelper;
 import dao.database.metadata.MetadataDbHelper;
-import dao.database.phone_usage.PhoneUsageDbHelper;
+import dao.database.interval.IntervalDbHelper;
 import dao.database.survey.SurveyDbHelper;
 import dao.database.survey_result.SurveyResultDbHelper;
 import model.Metadata;
@@ -32,7 +33,7 @@ public class MainActivity extends Activity {
 
     MetadataDbHelper metadataDbHelper;
     SurveyDbHelper surveyDbHelper;
-    PhoneUsageDbHelper phoneUsageDbHelper;
+    IntervalDbHelper intervalDbHelper;
     SurveyResultDbHelper surveyResultDbHelper;
 
     Metadata metadata;
@@ -57,7 +58,7 @@ public class MainActivity extends Activity {
     private void fetchDbHelpers() {
         metadataDbHelper = MetadataDbHelper.getInstance(context);
         surveyDbHelper = SurveyDbHelper.getInstance(context);
-        phoneUsageDbHelper = PhoneUsageDbHelper.getInstance(context);
+        intervalDbHelper = IntervalDbHelper.getInstance(context);
         surveyResultDbHelper = SurveyResultDbHelper.getInstance(context);
     }
 

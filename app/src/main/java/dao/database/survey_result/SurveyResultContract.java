@@ -7,7 +7,8 @@ public class SurveyResultContract {
     public static final String CREATE_TABLE =
             "CREATE TABLE " + SurveyResultEntry.TABLE_NAME + " (" +
                     BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    SurveyResultEntry.COLUMN_SURVEY_ID + " TEXT)";
+                    SurveyResultEntry.COLUMN_SURVEY_ID + " TEXT," +
+                    SurveyResultEntry.COLUMN_UUID + " TEXT)";
 
     public static final String COUNT_ENTRIES =
             "SELECT COUNT(*) FROM " + SurveyResultEntry.TABLE_NAME;
@@ -24,5 +25,7 @@ public class SurveyResultContract {
 
         // id of the corresponding object on the server
         public static final String COLUMN_SURVEY_ID = "survey_id";
+        public static final String COLUMN_UUID = "uuid";
+
     }
 }

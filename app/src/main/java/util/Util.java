@@ -9,8 +9,12 @@ public class Util {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixels, context.getResources().getDisplayMetrics());
     }
 
+    public static long daysToMilis(int days) {
+        return days * hoursToMillis(24);
+    }
+
     public static long hoursToMillis(int hours) {
-        return hours * 60 * 60 * 1000;
+        return hours * minutesToMillis(60);
     }
 
     public static long minutesToMillis(int minutes) {

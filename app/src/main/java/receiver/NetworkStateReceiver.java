@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import dao.database.DatabaseHelper;
 import dao.database.metadata.MetadataDbHelper;
-import dao.database.phone_usage.PhoneUsageDbHelper;
+import dao.database.interval.IntervalDbHelper;
 import dao.database.survey.SurveyDbHelper;
 import dao.database.survey_result.SurveyResultDbHelper;
 import dto.SurveyDTO;
@@ -30,7 +30,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     private MetadataDbHelper metadataDbHelper;
     private DatabaseHelper databaseHelper;
     private SurveyResultDbHelper surveyResultDbHelper;
-    private PhoneUsageDbHelper phoneUsageDbHelper;
+    private IntervalDbHelper intervalDbHelper;
     private SurveyDbHelper surveyDbHelper;
     private Gson gson;
 
@@ -42,7 +42,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         metadataDbHelper = MetadataDbHelper.getInstance(context);
         databaseHelper = DatabaseHelper.getInstance(context);
         surveyResultDbHelper = SurveyResultDbHelper.getInstance(context);
-        phoneUsageDbHelper = PhoneUsageDbHelper.getInstance(context);
+        intervalDbHelper = IntervalDbHelper.getInstance(context);
         surveyDbHelper = SurveyDbHelper.getInstance(context);
         gson = new Gson();
     }
@@ -115,12 +115,12 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 //    }
 //
 //    private void sendUserResult(String surveyResultId, Metadata metadata) {
-//        List<Interval> phoneUsage = phoneUsageDbHelper.getPhoneUsage();
+//        List<Interval> phoneUsage = intervalDbHelper.getPhoneUsage();
 //        UserResultDTO userResultDTO = UserResultMapper.mapToDto(surveyResultId, metadata, phoneUsage);
 //        String userResultJsonString = gson.toJson(userResultDTO);
 //
 //        sendRequestToServer("user_results", userResultJsonString);
-//        phoneUsageDbHelper.removeAll();
+//        intervalDbHelper.removeAll();
 //
 //    }
 

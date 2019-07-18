@@ -15,6 +15,8 @@ public class SurveyMapper {
         values.put(SurveyContract.SurveyEntry.COLUMN_FOREIGN_ID, survey.getForeignId());
         values.put(SurveyContract.SurveyEntry.COLUMN_TITLE, survey.getTitle());
         values.put(SurveyContract.SurveyEntry.COLUMN_DESCRIPTION, survey.getDescription());
+        values.put(SurveyContract.SurveyEntry.COLUMN_START_TIME, survey.getStartTime());
+        values.put(SurveyContract.SurveyEntry.COLUMN_END_TIME, survey.getEndTime());
         return values;
     }
 
@@ -23,6 +25,8 @@ public class SurveyMapper {
         survey.setForeignId(dto.getId());
         survey.setTitle(dto.getTitle());
         survey.setDescription(dto.getDescription());
+        survey.setStartTime(dto.getIntervalDTO().getStartTime());
+        survey.setEndTime(dto.getIntervalDTO().getEndTime());
         survey.setQuestions(QuestionMapper.mapToModelList(dto.getQuestions()));
         return survey;
     }

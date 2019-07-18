@@ -12,6 +12,7 @@ import java.util.List;
 import dao.database.DatabaseHelper;
 import dao.database.question.QuestionDbHelper;
 import mapper.SurveyMapper;
+import model.Interval;
 import model.Question;
 import model.Survey;
 
@@ -86,10 +87,11 @@ public class SurveyDbHelper {
                 String foreignId = cursor.getString(cursor.getColumnIndexOrThrow(SurveyContract.SurveyEntry.COLUMN_FOREIGN_ID));
                 String title = cursor.getString(cursor.getColumnIndexOrThrow(SurveyContract.SurveyEntry.COLUMN_TITLE));
                 String description = cursor.getString(cursor.getColumnIndexOrThrow(SurveyContract.SurveyEntry.COLUMN_DESCRIPTION));
+                Integer startTime = cursor.getInt(cursor.getColumnIndexOrThrow(SurveyContract.SurveyEntry.COLUMN_START_TIME));
+                Integer endTime = cursor.getInt(cursor.getColumnIndexOrThrow(SurveyContract.SurveyEntry.COLUMN_END_TIME));
 
                 List<Question> questions = questionDbHelper.findWhereSurveyId(foreignId);
-
-                result.add(new Survey(foreignId, title, description, questions));
+                result.add(new Survey(foreignId, title, description, startTime, endTime, questions));
                 cursor.moveToNext();
             }
         }

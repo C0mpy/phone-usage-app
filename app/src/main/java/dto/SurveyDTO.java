@@ -7,12 +7,14 @@ public class SurveyDTO {
     private String id;
     private String title;
     private String description;
+    private IntervalDTO intervalDTO;
     private List<QuestionDTO> questions;
 
-    public SurveyDTO(String id, String title, String description, List<QuestionDTO> questions) {
+    public SurveyDTO(String id, String title, String description, IntervalDTO intervalDTO, List<QuestionDTO> questions) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.intervalDTO = intervalDTO;
         this.questions = questions;
     }
 
@@ -38,6 +40,14 @@ public class SurveyDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public IntervalDTO getIntervalDTO() {
+        return intervalDTO;
+    }
+
+    public void setIntervalDTO(IntervalDTO intervalDTO) {
+        this.intervalDTO = intervalDTO;
     }
 
     public List<QuestionDTO> getQuestions() {

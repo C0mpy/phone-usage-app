@@ -1,20 +1,17 @@
-package model;
+package dto;
 
 import java.io.Serializable;
 
-public class Interval implements Serializable {
+public class IntervalDTO implements Serializable {
 
     private long startTime;
     private long endTime;
-    private String surveyId;
 
-    public Interval() {
-    }
+    public IntervalDTO() {}
 
-    public Interval(long startTime, long endTime, String surveyId) {
+    public IntervalDTO(long startTime, long endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.surveyId = surveyId;
     }
 
     public long getStartTime() {
@@ -33,11 +30,11 @@ public class Interval implements Serializable {
         this.endTime = endTime;
     }
 
-    public String getSurveyId() {
-        return surveyId;
-    }
-
-    public void setSurveyId(String surveyId) {
-        this.surveyId = surveyId;
+    @Override
+    public String toString() {
+        return "Interval{" +
+                "startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
     }
 }
