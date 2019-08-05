@@ -3,6 +3,10 @@ package util;
 import android.content.Context;
 import android.util.TypedValue;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Util {
 
     public static float convertToDp(int pixels, Context context) {
@@ -19,6 +23,16 @@ public class Util {
 
     public static long minutesToMillis(int minutes) {
         return minutes * 60 * 1000;
+    }
+
+    public static long millisToMinutes(long millis) {
+        return millis / 60 / 1000;
+    }
+
+    public static String millisToDate(long millis) {
+        DateFormat simple = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        Date date = new Date(millis);
+        return simple.format(date);
     }
 
 }

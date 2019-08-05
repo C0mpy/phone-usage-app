@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.database.interval.IntervalContract;
+import dto.IntervalDTO;
 import dto.PhoneUsageDTO;
 import model.Interval;
 
@@ -16,7 +17,7 @@ public class IntervalMapper {
         ContentValues values = new ContentValues();
         values.put(IntervalContract.IntervalEntry.COLUMN_NAME_START_TIME, interval.getStartTime());
         values.put(IntervalContract.IntervalEntry.COLUMN_NAME_END_TIME, interval.getEndTime());
-        values.put(IntervalContract.IntervalEntry.COLUMN_SURVEY_RESULT_ID, interval.getSurveyId());
+        values.put(IntervalContract.IntervalEntry.COLUMN_SURVEY_RESULT_ID, interval.getSurveyResultId());
         return values;
     }
 
@@ -27,17 +28,15 @@ public class IntervalMapper {
         return new Interval(startTime, endTime, surveyResultId);
     }
 
-    public static List<PhoneUsageDTO> mapToDtoList(List<Interval> modelList) {
-        List<PhoneUsageDTO> result = new ArrayList<>();
+    public static List<IntervalDTO> mapToDtoList(List<Interval> modelList) {
+        List<IntervalDTO> result = new ArrayList<>();
         for (Interval interval : modelList) {
             result.add(mapToDto(interval));
         }
         return result;
     }
 
-    public static PhoneUsageDTO mapToDto(Interval model) {
-        return new PhoneUsageDTO(String.valueOf(model.getStartTime()),
-                String.valueOf(model.getEndTime()));
-
+    public static IntervalDTO mapToDto(Interval model) {
+        return new IntervalDTO(String.valueOf(model.getStartTime()), String.valueOf(model.getEndTime()));
     }
 }

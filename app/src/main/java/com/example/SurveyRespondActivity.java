@@ -22,6 +22,7 @@ import model.QuestionResponse;
 import model.Survey;
 import model.SurveyResult;
 import phone_usage_app.sw63.phoneusageapp.R;
+import receiver.SurveyAlarm;
 import service.StartReceiversService;
 import util.Util;
 
@@ -130,6 +131,8 @@ public class SurveyRespondActivity extends Activity {
                       .show();
 
                 registerReceivers();
+                SurveyAlarm.start(context);
+                finishAffinity();
             }
 
         });
@@ -155,6 +158,7 @@ public class SurveyRespondActivity extends Activity {
         surveyResultDbHelper.save(surveyResult);
 
         metadata.setExperimentIsRunning(true);
+        metadata.setExperimentStartTime(System.currentTimeMillis());
         metadata.setExperimentEndTime(survey.getEndTime());
         metadata.setSurveyResultsSentToServer(false);
         metadataDbHelper.save(metadata);
@@ -162,6 +166,5 @@ public class SurveyRespondActivity extends Activity {
 
     private void registerReceivers() {
         startService(new Intent(context, StartReceiversService.class));
-        finish();
     }
 }

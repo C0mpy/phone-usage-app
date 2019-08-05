@@ -25,8 +25,8 @@ public class SurveyMapper {
         survey.setForeignId(dto.getId());
         survey.setTitle(dto.getTitle());
         survey.setDescription(dto.getDescription());
-        survey.setStartTime(dto.getIntervalDTO().getStartTime());
-        survey.setEndTime(dto.getIntervalDTO().getEndTime());
+        survey.setStartTime(dto.getStartTime());
+        survey.setEndTime(dto.getEndTime());
         survey.setQuestions(QuestionMapper.mapToModelList(dto.getQuestions()));
         return survey;
     }

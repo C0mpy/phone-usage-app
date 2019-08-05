@@ -10,6 +10,7 @@ public class MetadataContract {
                     MetadataEntry.COLUMN_UUID + " TEXT," +
                     MetadataEntry.COLUMN_EXPERIMENT_IS_RUNNING + " INTEGER," +
                     MetadataEntry.COLUMN_EXPERIMENT_END_TIME + " INTEGER," +
+                    MetadataEntry.COLUMN_EXPERIMENT_START_TIME + " INTEGER," +
                     MetadataEntry.COLUMN_SURVEY_RESULTS_SENT_TO_SERVER + " INTEGER)";
 
     public static final String COUNT_ENTRIES =
@@ -28,6 +29,7 @@ public class MetadataContract {
         public static final String COLUMN_UUID = "uuid";
         public static final String COLUMN_EXPERIMENT_IS_RUNNING = "experiment_is_running";
         public static final String COLUMN_EXPERIMENT_END_TIME = "experiment_end_time";
+        public static final String COLUMN_EXPERIMENT_START_TIME = "experiment_start_time";
         public static final String COLUMN_SURVEY_RESULTS_SENT_TO_SERVER = "survey_results_sent_to_server";
     }
 

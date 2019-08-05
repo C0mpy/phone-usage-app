@@ -16,6 +16,8 @@ public class SurveyResultMapper {
     public static SurveyResultDTO mapToDTO(SurveyResult model) {
         SurveyResultDTO dto = new SurveyResultDTO();
         dto.setSurvey_id(model.getSurveyId());
+        dto.setIntervals(IntervalMapper.mapToDtoList(model.getIntervals()));
+        dto.setUuid(model.getUuid());
         dto.setQuestion_responses(QuestionResponseMapper.mapToDtoList(model.getQuestionResponses()));
         return dto;
     }

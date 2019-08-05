@@ -16,6 +16,9 @@ public class SurveyResultContract {
     public static final String FIND =
             "SELECT * FROM " + SurveyResultEntry.TABLE_NAME;
 
+    public static final String FIND_IDS =
+          "SELECT " + BaseColumns._ID + " FROM " + SurveyResultEntry.TABLE_NAME;
+
     public static final String SQL_DELETE_ENTRIES =
           "DELETE FROM " + SurveyResultEntry.TABLE_NAME;
 

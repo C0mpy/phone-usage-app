@@ -18,6 +18,10 @@ public class IntervalContract {
     public static final String SQL_GET_PHONE_USAGE =
           "SELECT * FROM " + IntervalEntry.TABLE_NAME + ";";
 
+    public static final String FIND_WHERE_SURVEY_RESULT_ID =
+          "SELECT * FROM " + IntervalEntry.TABLE_NAME +
+          " WHERE " + IntervalEntry.COLUMN_SURVEY_RESULT_ID + " = ?";
+
     public static class IntervalEntry implements BaseColumns {
 
         public static final String TABLE_NAME = "interval";

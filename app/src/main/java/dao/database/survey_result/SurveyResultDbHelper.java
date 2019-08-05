@@ -34,7 +34,7 @@ public class SurveyResultDbHelper {
         db = databaseHelper.getWritableDatabase();
         db.enableWriteAheadLogging();
         questionResponseDbHelper = QuestionResponseDbHelper.getInstance(context);
-
+        intervalDbHelper = IntervalDbHelper.getInstance(context);
     }
 
     public static synchronized SurveyResultDbHelper getInstance(Context context) {
@@ -47,6 +47,7 @@ public class SurveyResultDbHelper {
     public SurveyResult save(SurveyResult surveyResult) {
         ContentValues values = new ContentValues();
         values.put(SurveyResultContract.SurveyResultEntry.COLUMN_SURVEY_ID, surveyResult.getSurveyId());
+        values.put(SurveyResultContract.SurveyResultEntry.COLUMN_UUID, surveyResult.getUuid());
 
         String id = String.valueOf(db.insert(SurveyResultContract.SurveyResultEntry.TABLE_NAME, null, values));
         surveyResult.setId(id);
@@ -89,6 +90,20 @@ public class SurveyResultDbHelper {
                 List<QuestionResponse> questionResponses = questionResponseDbHelper.findWhereSurveyResultId(id);
                 List<Interval> intervals = intervalDbHelper.findWhereSurveyResultId(id);
                 result.add(new SurveyResult(id, surveyId, uuid, intervals, questionResponses));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return result;
+    }
+
+    public List<String> findAllIds() {
+        List<String> result = new ArrayList<>();
+        Cursor cursor = db.rawQuery(SurveyResultContract.FIND_IDS, null);
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                String id = cursor.getString(cursor.getColumnIndexOrThrow(BaseColumns._ID));
+                result.add(id);
                 cursor.moveToNext();
             }
         }

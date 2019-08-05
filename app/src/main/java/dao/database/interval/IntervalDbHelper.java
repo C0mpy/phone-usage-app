@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import dao.database.DatabaseHelper;
+import dao.database.metadata.MetadataDbHelper;
 import mapper.IntervalMapper;
 import model.Interval;
 
@@ -13,10 +14,12 @@ import java.util.List;
 public class IntervalDbHelper {
 
     private static SQLiteDatabase db;
+    private static Context context;
     private static DatabaseHelper databaseHelper;
     private static IntervalDbHelper sInstance;
 
-    private IntervalDbHelper(Context context) {
+    private IntervalDbHelper(Context _context) {
+        context = _context;
         databaseHelper = DatabaseHelper.getInstance(context);
         db = databaseHelper.getWritableDatabase();
         db.enableWriteAheadLogging();
@@ -53,7 +56,16 @@ public class IntervalDbHelper {
     }
 
     public List<Interval> findWhereSurveyResultId(String surveyResultId) {
-        return sInstance.findWhereSurveyResultId(surveyResultId);
+        List<Interval> result = new ArrayList<>();
+        Cursor cursor = db.rawQuery(IntervalContract.FIND_WHERE_SURVEY_RESULT_ID, new String[] { surveyResultId });
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                result.add(IntervalMapper.mapToModel(cursor));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return result;
     }
 
 }

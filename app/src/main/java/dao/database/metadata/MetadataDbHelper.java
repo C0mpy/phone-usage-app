@@ -60,7 +60,7 @@ public class MetadataDbHelper {
         List<Metadata> metadataList = findAll();
         if (metadataList.size() == 0) {
             Log.w("SurveyDbHelper.init", "There is no Metadata Entity in DB");
-            return save(new Metadata(UUID.randomUUID().toString(), false, null, false));
+            return save(new Metadata(UUID.randomUUID().toString(), false, null, null, false));
         } else if (metadataList.size() > 1) {
             Log.w("SurveyDbHelper.init", "There is more than one Metadata Entity in DB");
             return save(metadataList.get(0));

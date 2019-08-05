@@ -28,6 +28,10 @@
                 android:name="com.example.SurveyRespondActivity"
                 android:label="@string/app_name"/>
 
+        <activity
+                android:name="com.example.SurveyStatusActivity"
+                android:label="@string/app_name"/>
+
         <service android:name="service.StartReceiversService"/>
 
     </application>

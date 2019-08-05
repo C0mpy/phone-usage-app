@@ -4,37 +4,30 @@ import java.io.Serializable;
 
 public class IntervalDTO implements Serializable {
 
-    private long startTime;
-    private long endTime;
+    private String start_time;
+    private String end_time;
 
     public IntervalDTO() {}
 
-    public IntervalDTO(long startTime, long endTime) {
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public IntervalDTO(String start_time, String end_time) {
+        this.start_time = start_time;
+        this.end_time = end_time;
     }
 
-    public long getStartTime() {
-        return startTime;
+    public String getStart_time() {
+        return start_time;
     }
 
-    public void setStartTime(long startTime) {
-        this.startTime = startTime;
+    public void setStart_time(String start_time) {
+        this.start_time = start_time;
     }
 
-    public long getEndTime() {
-        return endTime;
+    public String getEnd_time() {
+        return end_time;
     }
 
-    public void setEndTime(long endTime) {
-        this.endTime = endTime;
+    public void setEnd_time(String end_time) {
+        this.end_time = end_time;
     }
 
-    @Override
-    public String toString() {
-        return "Interval{" +
-                "startTime=" + startTime +
-                ", endTime=" + endTime +
-                '}';
-    }
 }

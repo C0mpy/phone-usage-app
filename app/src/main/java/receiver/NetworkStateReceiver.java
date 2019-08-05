@@ -8,14 +8,15 @@ import android.net.NetworkInfo;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import dao.database.DatabaseHelper;
 import dao.database.metadata.MetadataDbHelper;
-import dao.database.interval.IntervalDbHelper;
 import dao.database.survey.SurveyDbHelper;
 import dao.database.survey_result.SurveyResultDbHelper;
 import dto.SurveyDTO;
 import mapper.SurveyMapper;
+import mapper.SurveyResultMapper;
+import model.Metadata;
 import model.Survey;
+import model.SurveyResult;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -28,22 +29,18 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
     private Context context;
     private MetadataDbHelper metadataDbHelper;
-    private DatabaseHelper databaseHelper;
     private SurveyResultDbHelper surveyResultDbHelper;
-    private IntervalDbHelper intervalDbHelper;
     private SurveyDbHelper surveyDbHelper;
     private Gson gson;
 
-    public static final String SERVER_PATH = "https://phone-usage-server.herokuapp.com/";
-//    public static final String SERVER_PATH = "http://10.0.2.2:3000/";
+//    public static final String SERVER_PATH = "https://phone-usage-server.herokuapp.com/";
+    public static final String SERVER_PATH = "http://10.0.2.2:3000/";
 
     public NetworkStateReceiver(Context context) {
         this.context = context;
         metadataDbHelper = MetadataDbHelper.getInstance(context);
-        databaseHelper = DatabaseHelper.getInstance(context);
-        surveyResultDbHelper = SurveyResultDbHelper.getInstance(context);
-        intervalDbHelper = IntervalDbHelper.getInstance(context);
         surveyDbHelper = SurveyDbHelper.getInstance(context);
+        surveyResultDbHelper = SurveyResultDbHelper.getInstance(context);
         gson = new Gson();
     }
 
@@ -52,9 +49,10 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         if (hasInternetConnection()) {
             fetchActiveSurveysFromServer();
 
-//            if (!metadata.getSurveyResultsSentToServer()) {
-//                sendResultsToServer();
-//            }
+            Metadata metadata = metadataDbHelper.findOne();
+            if (metadata.getExperimentIsRunning()) {
+                sendSurveyResultWithIntervals();
+            }
         }
     }
 
@@ -90,39 +88,17 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         List<SurveyDTO> surveyDTOS = gson.fromJson(content.toString(), new TypeToken<List<SurveyDTO>>(){}.getType());
         return SurveyMapper.toModelList(surveyDTOS);
     }
-//
-//    private void sendResultsToServer() {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Metadata metadata = metadataDbHelper.findOne();
-//                SurveyResult surveyResult = surveyResultDbHelper.findOne();
-//                String surveyResultId = sendSurveyResult(surveyResult);
-//                sendUserResult(surveyResultId, metadata);
-//                surveyResultDbHelper.removeAll();
-//                metadata.setSurveyResultsSentToServer(true);
-//                metadataDbHelper.save(metadata);
-//            }
-//        }).start();
-//    }
-//
-//    private String sendSurveyResult(SurveyResult surveyResult) {
-//        String surveyResultJsonString = gson.toJson(SurveyResultMapper.mapToDTO(surveyResult));
-//        StringBuffer content = sendRequestToServer("survey_results", surveyResultJsonString);
-//        HashMap<String, Object> resultMap = gson.fromJson(content.toString(), HashMap.class);
-//        return String.valueOf(resultMap.get("survey_result_id"));
-//
-//    }
-//
-//    private void sendUserResult(String surveyResultId, Metadata metadata) {
-//        List<Interval> phoneUsage = intervalDbHelper.getPhoneUsage();
-//        UserResultDTO userResultDTO = UserResultMapper.mapToDto(surveyResultId, metadata, phoneUsage);
-//        String userResultJsonString = gson.toJson(userResultDTO);
-//
-//        sendRequestToServer("user_results", userResultJsonString);
-//        intervalDbHelper.removeAll();
-//
-//    }
+
+    private void sendSurveyResultWithIntervals() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SurveyResult surveyResult = surveyResultDbHelper.findOne();
+                String surveyResultJsonString = gson.toJson(SurveyResultMapper.mapToDTO(surveyResult));
+                sendRequestToServer("survey_results", surveyResultJsonString);
+            }
+        }).start();
+    }
 
     private StringBuffer sendRequestToServer(String httpPath, String jsonData) {
         try {

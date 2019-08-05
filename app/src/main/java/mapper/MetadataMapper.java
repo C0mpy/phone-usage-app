@@ -14,19 +14,22 @@ public class MetadataMapper {
               cursor.getInt(cursor.getColumnIndexOrThrow(MetadataContract.MetadataEntry.COLUMN_EXPERIMENT_IS_RUNNING)) == 1
                     ? true
                     : false;
+        Long experimentStartTime =
+              cursor.getLong(cursor.getColumnIndexOrThrow(MetadataContract.MetadataEntry.COLUMN_EXPERIMENT_START_TIME));
         Long experimentEndTime =
               cursor.getLong(cursor.getColumnIndexOrThrow(MetadataContract.MetadataEntry.COLUMN_EXPERIMENT_END_TIME));
         Boolean surveyResultsSentToServer =
               cursor.getInt(cursor.getColumnIndexOrThrow(MetadataContract.MetadataEntry.COLUMN_SURVEY_RESULTS_SENT_TO_SERVER)) == 1
                     ? true
                     : false;
-        return new Metadata(uuid, experimentIsRunning, experimentEndTime, surveyResultsSentToServer);
+        return new Metadata(uuid, experimentIsRunning, experimentStartTime, experimentEndTime, surveyResultsSentToServer);
     }
 
     public static ContentValues toContentValues(Metadata metadata) {
         ContentValues values = new ContentValues();
         values.put(MetadataContract.MetadataEntry.COLUMN_UUID, metadata.getUuid());
         values.put(MetadataContract.MetadataEntry.COLUMN_EXPERIMENT_IS_RUNNING, metadata.getExperimentIsRunning());
+        values.put(MetadataContract.MetadataEntry.COLUMN_EXPERIMENT_START_TIME, metadata.getExperimentStartTime());
         values.put(MetadataContract.MetadataEntry.COLUMN_EXPERIMENT_END_TIME, metadata.getExperimentEndTime());
         values.put(MetadataContract.MetadataEntry.COLUMN_SURVEY_RESULTS_SENT_TO_SERVER, metadata.getSurveyResultsSentToServer());
         return values;

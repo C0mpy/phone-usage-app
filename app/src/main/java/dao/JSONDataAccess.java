@@ -12,18 +12,18 @@ public class JSONDataAccess {
 
     private static Gson gson = new Gson();
 
-    public static void initPhoneUsage(Context context) {
+    public static void initCurrentInterval(Context context) {
         Interval interval = new Interval();
         interval.setStartTime(System.currentTimeMillis());
-        writeCurrentPhoneUsageData(interval, context);
+        writeCurrentInterval(interval, context);
     }
 
-    public static void writeCurrentPhoneUsageData(Interval intervalData, Context context) {
-        writeJsonObject("phoneUsage", intervalData, context);
+    public static void writeCurrentInterval(Interval intervalData, Context context) {
+        writeJsonObject("interval", intervalData, context);
     }
 
-    public static Interval readCurrentPhoneUsageData(Context context) {
-        return gson.fromJson(getJsonString("phoneUsage", context), Interval.class);
+    public static Interval readCurrentInterval(Context context) {
+        return gson.fromJson(getJsonString("interval", context), Interval.class);
     }
 
     public static void writeActiveSurvey(Survey survey, Context context) {

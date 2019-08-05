@@ -11,7 +11,7 @@ public class ScreenOnReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        JSONDataAccess.initPhoneUsage(context);
+        JSONDataAccess.initCurrentInterval(context);
         Log.d("ScreenOnReceiver","Screen is ON!");
     }
 }

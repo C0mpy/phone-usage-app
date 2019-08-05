@@ -6,15 +6,15 @@ public class Interval implements Serializable {
 
     private long startTime;
     private long endTime;
-    private String surveyId;
+    private String surveyResultId;
 
     public Interval() {
     }
 
-    public Interval(long startTime, long endTime, String surveyId) {
+    public Interval(long startTime, long endTime, String surveyResultId) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.surveyId = surveyId;
+        this.surveyResultId = surveyResultId;
     }
 
     public long getStartTime() {
@@ -33,11 +33,11 @@ public class Interval implements Serializable {
         this.endTime = endTime;
     }
 
-    public String getSurveyId() {
-        return surveyId;
+    public String getSurveyResultId() {
+        return surveyResultId;
     }
 
-    public void setSurveyId(String surveyId) {
-        this.surveyId = surveyId;
+    public void setSurveyResultId(String surveyResultId) {
+        this.surveyResultId = surveyResultId;
     }
 }

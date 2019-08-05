@@ -7,14 +7,16 @@ public class SurveyDTO {
     private String id;
     private String title;
     private String description;
-    private IntervalDTO intervalDTO;
+    private long startTime;
+    private long endTime;
     private List<QuestionDTO> questions;
 
-    public SurveyDTO(String id, String title, String description, IntervalDTO intervalDTO, List<QuestionDTO> questions) {
+    public SurveyDTO(String id, String title, String description, long startTime, long endTime, List<QuestionDTO> questions) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.intervalDTO = intervalDTO;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.questions = questions;
     }
 
@@ -42,12 +44,20 @@ public class SurveyDTO {
         this.description = description;
     }
 
-    public IntervalDTO getIntervalDTO() {
-        return intervalDTO;
+    public long getStartTime() {
+        return startTime;
     }
 
-    public void setIntervalDTO(IntervalDTO intervalDTO) {
-        this.intervalDTO = intervalDTO;
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
     }
 
     public List<QuestionDTO> getQuestions() {
