@@ -16,8 +16,8 @@ import dao.database.metadata.MetadataDbHelper;
 import dao.database.survey.SurveyDbHelper;
 import dao.database.survey_result.SurveyResultDbHelper;
 import model.Metadata;
+import model.Survey;
 import phone_usage_app.sw63.phoneusageapp.R;
-import receiver.SurveyAlarm;
 
 import java.util.HashMap;
 
@@ -59,12 +59,12 @@ public class MainActivity extends Activity {
     }
 
     private void moveToNextActivity() {
-        if (JSONDataAccess.readActiveSurvey(context).getEndTime() > System.currentTimeMillis()) {
-            Intent timeOnPhoneActivity = new Intent(context, SurveyPickActivity.class);
-            startActivity(timeOnPhoneActivity);
+        Survey activeSurvey = JSONDataAccess.readActiveSurvey(context);
+        if (activeSurvey != null && activeSurvey.getEndTime() > System.currentTimeMillis()) {
+            Intent surveyStatusActivity = new Intent(context, SurveyStatusActivity.class);
+            startActivity(surveyStatusActivity);
         } else {
-            Intent surveyPickActivity = new Intent(context, SurveyStatusActivity.class);
-            SurveyAlarm.start(context);
+            Intent surveyPickActivity = new Intent(context, SurveyPickActivity.class);
             startActivity(surveyPickActivity);
         }
     }
@@ -76,6 +76,7 @@ public class MainActivity extends Activity {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         context.deleteDatabase(DatabaseHelper.DATABASE_NAME);
+                        JSONDataAccess.writeActiveSurvey(null, context);
                     case DialogInterface.BUTTON_NEGATIVE:
                         fetchDbHelpers();
                         fetchDbData();

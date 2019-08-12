@@ -10,9 +10,9 @@ import dao.database.question.QuestionContract;
 import dao.database.question_response.QuestionResponseContract;
 import dao.database.survey.SurveyContract;
 import dao.database.survey_result.SurveyResultContract;
-import model.Survey;
-import util.Util;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -58,7 +58,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_FOREIGN_ID, "1");
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_TITLE, "This is the inital Survey deployed to mobile devices.");
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_DESCRIPTION, "Please answer questions on a scale 1 - 5");
-        surveyCV.put(SurveyContract.SurveyEntry.COLUMN_START_TIME, System.currentTimeMillis() - Util.daysToMilis(1));
+
+        Calendar startTime = Calendar.getInstance();
+        startTime.set(2019, 7, 10);
+        surveyCV.put(SurveyContract.SurveyEntry.COLUMN_START_TIME, startTime.getTimeInMillis());
+
+        Calendar endTime = Calendar.getInstance();
+        endTime.set(2019, 7, 25);
+        surveyCV.put(SurveyContract.SurveyEntry.COLUMN_END_TIME, endTime.getTimeInMillis());
         long surveyId = db.insert(SurveyContract.SurveyEntry.TABLE_NAME, null, surveyCV);
 
         ContentValues question1CV = new ContentValues();
@@ -79,15 +86,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
-
-    public void beginTransaction() {
-        getWritableDatabase().beginTransaction();
-    }
-
-    public void endTransaction() {
-        SQLiteDatabase db = getWritableDatabase();
-        db.setTransactionSuccessful();
-        db.endTransaction();
-    }
 
 }

@@ -126,8 +126,8 @@ public class SurveyRespondActivity extends Activity {
                 saveSurveyResultAndUpdateMetadata(surveyResult);
 
                 Toast
-                      .makeText(context, "Thanks for taking the survey! Next survey expected at: " + metadata.getExperimentEndTime(),
-                                Toast.LENGTH_LONG)
+                      .makeText(context, "Thanks for taking the survey! Next survey expected at: " +
+                                         Util.millisToDate(metadata.getExperimentEndTime()), Toast.LENGTH_LONG)
                       .show();
 
                 registerReceivers();

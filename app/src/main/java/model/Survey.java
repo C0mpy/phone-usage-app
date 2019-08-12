@@ -15,6 +15,14 @@ public class Survey implements Serializable {
 
     public Survey() {}
 
+    public Survey(String foreignId, String title, String description, long startTime, long endTime) {
+        this.foreignId = foreignId;
+        this.title = title;
+        this.description = description;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     public Survey(String foreignId, String title, String description, long startTime, long endTime, List<Question> questions) {
         this.foreignId = foreignId;
         this.title = title;

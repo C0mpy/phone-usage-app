@@ -1,6 +1,7 @@
 package mapper;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import dao.database.survey.SurveyContract;
 import dto.SurveyDTO;
 import model.Survey;
@@ -18,6 +19,15 @@ public class SurveyMapper {
         values.put(SurveyContract.SurveyEntry.COLUMN_START_TIME, survey.getStartTime());
         values.put(SurveyContract.SurveyEntry.COLUMN_END_TIME, survey.getEndTime());
         return values;
+    }
+
+    public static Survey mapToModel(Cursor cursor) {
+        String foreignId = cursor.getString(cursor.getColumnIndexOrThrow(SurveyContract.SurveyEntry.COLUMN_FOREIGN_ID));
+        String title = cursor.getString(cursor.getColumnIndexOrThrow(SurveyContract.SurveyEntry.COLUMN_TITLE));
+        String description = cursor.getString(cursor.getColumnIndexOrThrow(SurveyContract.SurveyEntry.COLUMN_DESCRIPTION));
+        Long startTime = cursor.getLong(cursor.getColumnIndexOrThrow(SurveyContract.SurveyEntry.COLUMN_START_TIME));
+        Long endTime = cursor.getLong(cursor.getColumnIndexOrThrow(SurveyContract.SurveyEntry.COLUMN_END_TIME));
+        return new Survey(foreignId, title, description, startTime, endTime);
     }
 
     public static Survey toModel(SurveyDTO dto) {
