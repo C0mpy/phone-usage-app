@@ -2,15 +2,19 @@ package com.example;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+import dao.JSONDataAccess;
 import dao.database.interval.IntervalDbHelper;
 import dao.database.metadata.MetadataDbHelper;
 import dao.database.survey_result.SurveyResultDbHelper;
 import model.Interval;
 import model.Metadata;
+import model.Survey;
 import model.SurveyResult;
 import phone_usage_app.sw63.phoneusageapp.R;
+import service.StartReceiversService;
 import util.Util;
 
 import java.util.List;
@@ -37,9 +41,13 @@ public class SurveyStatusActivity extends Activity {
 
         textView = findViewById(R.id.surveyStatusText);
         SurveyResult activeSurveyResult = surveyResultDbHelper.findOne();
+        Survey activeSurvey = JSONDataAccess.readActiveSurvey(context);
         long timeSpentForExperiment = calculateTimeSpentforExperiment(activeSurveyResult.getSurveyId());
         textView.setText("Since the start of this experimet at: " + Util.millisToDate(metadata.getExperimentStartTime()) +
-                         " time spent on phone is: " + Util.millisToMinutes(timeSpentForExperiment) + " minutes");
+                         " time spent on phone is: " + Util.millisToMinutes(timeSpentForExperiment) + " minutes." +
+                         " Survey is expected to end at: " + Util.millisToDate(activeSurvey.getEndTime() + 1000 * 60 * 1));
+
+        startService(new Intent(context, StartReceiversService.class));
     }
 
     private void fetchDbHelpers() {
