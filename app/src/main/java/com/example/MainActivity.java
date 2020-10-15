@@ -53,12 +53,15 @@ public class MainActivity extends Activity {
     private void moveToNextActivity() {
         Survey activeSurvey = JSONDataAccess.readActiveSurvey(context);
         if (activeSurvey != null && activeSurvey.getEndTime() > System.currentTimeMillis()) {
-            Intent surveyStatusActivity = new Intent(context, SurveyStatusActivity.class);
+            Intent surveyStatusActivity = new Intent(this, SurveyStatusActivity.class);
+            surveyStatusActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(surveyStatusActivity);
         } else {
-            Intent surveyPickActivity = new Intent(context, SurveyPickActivity.class);
+            Intent surveyPickActivity = new Intent(this, SurveyPickActivity.class);
+            surveyPickActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(surveyPickActivity);
         }
+        finish();
     }
 
     private void resetDatabaseIfNeeded() {
