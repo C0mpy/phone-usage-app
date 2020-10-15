@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.SeekBar;
+
 import dao.JSONDataAccess;
 import dao.database.DatabaseHelper;
 import dao.database.interval.IntervalDbHelper;
@@ -19,15 +17,9 @@ import model.Metadata;
 import model.Survey;
 import phone_usage_app.sw63.phoneusageapp.R;
 
-import java.util.HashMap;
-
 public class MainActivity extends Activity {
 
     Context context;
-
-    HashMap<Integer, SeekBar> questionSeekbar = new HashMap<>();
-    LinearLayout questionLinearLayout;
-    Button finishButton;
 
     MetadataDbHelper metadataDbHelper;
     SurveyDbHelper surveyDbHelper;
@@ -77,6 +69,7 @@ public class MainActivity extends Activity {
                     case DialogInterface.BUTTON_POSITIVE:
                         context.deleteDatabase(DatabaseHelper.DATABASE_NAME);
                         JSONDataAccess.writeActiveSurvey(null, context);
+                        // no break here
                     case DialogInterface.BUTTON_NEGATIVE:
                         fetchDbHelpers();
                         fetchDbData();
@@ -87,10 +80,10 @@ public class MainActivity extends Activity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         AlertDialog alertDialog = builder
-                                        .setMessage("Should we reset the database ?")
-                                        .setPositiveButton("Yes", dialogClickListener)
-                                        .setNegativeButton("No", dialogClickListener)
-                                        .create();
+                .setMessage("Should we reset the database ?")
+                .setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener)
+                .create();
         alertDialog.show();
     }
 

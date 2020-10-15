@@ -60,11 +60,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_DESCRIPTION, "Please answer questions on a scale 1 - 5");
 
         Calendar startTime = Calendar.getInstance();
-        startTime.set(2019, 7, 10);
+        startTime.set(2019, 8, 10);
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_START_TIME, startTime.getTimeInMillis());
 
         Calendar endTime = Calendar.getInstance();
-        endTime.set(2019, 7, 25);
+        endTime.set(2025, 8, 25);
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_END_TIME, endTime.getTimeInMillis());
         long surveyId = db.insert(SurveyContract.SurveyEntry.TABLE_NAME, null, surveyCV);
 
