@@ -53,7 +53,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         metadataCV.put(MetadataContract.MetadataEntry.COLUMN_SURVEY_RESULTS_SENT_TO_SERVER, false);
         db.insert(MetadataContract.MetadataEntry.TABLE_NAME, null, metadataCV);
 
-
         ContentValues surveyCV = new ContentValues();
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_FOREIGN_ID, "1");
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_TITLE, "This is the inital Survey deployed to mobile devices.");
@@ -64,7 +63,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_START_TIME, startTime.getTimeInMillis());
 
         Calendar endTime = Calendar.getInstance();
-        endTime.set(2025, 8, 25);
+        endTime.set(2021, 1, 31);
         surveyCV.put(SurveyContract.SurveyEntry.COLUMN_END_TIME, endTime.getTimeInMillis());
         long surveyId = db.insert(SurveyContract.SurveyEntry.TABLE_NAME, null, surveyCV);
 
